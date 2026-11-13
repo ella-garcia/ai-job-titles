@@ -5,11 +5,14 @@ from .config import CFG
 
 FAMILY_PATTERNS = {name: re.compile(pattern, re.I) for name, pattern in CFG["families"].items()}
 SPAIN = re.compile(CFG["spain_pattern"], re.I)
+EXCLUDE = re.compile(CFG["exclude_titles"], re.I) if CFG.get("exclude_titles") else None
 
 
 def family(title: str | None) -> str:
-    """First family whose pattern matches the title, else 'other'."""
+    """First family whose pattern matches the title, else 'other'. Excluded titles are always 'other'."""
     text = (title or "").lower()
+    if EXCLUDE and EXCLUDE.search(text):
+        return "other"
     for name, pattern in FAMILY_PATTERNS.items():
         if pattern.search(text):
             return name

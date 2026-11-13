@@ -86,6 +86,8 @@ def _load_pages(prefix: str) -> dict:
         with gzip.open(path, "rt", encoding="utf-8") as fh:
             for line in fh:
                 rec = json.loads(line)
+                if rec["status"] == 0:  # the download itself failed (e.g. Archive outage): retry it
+                    continue
                 seen[rec["key"]] = rec
     return seen
 
@@ -96,7 +98,11 @@ def coverage() -> dict[str, pd.DataFrame]:
     count_rows, usable_rows = [], []
     for company, prefixes in cfg["prefixes"].items():
         for prefix in prefixes:
-            rows = cdx_rows(prefix)
+            try:
+                rows = cdx_rows(prefix)
+            except Exception as exc:
+                print(f"SKIPPED {prefix}: {exc}  (re-run later; finished prefixes are cached)")
+                continue
             print(f"{prefix}: {len(rows)} unique URLs")
             for ts, url, _ in rows:
                 count_rows.append(dict(company=company, prefix=prefix, period=period_of(ts), year=ts[:4],

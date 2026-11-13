@@ -17,12 +17,12 @@ dependencies = [
     "db-dtypes>=1.2",
     "datasets>=2.20",
     "kaggle>=1.6",
+    "scikit-learn>=1.5",
 ]
 
 [project.optional-dependencies]
 # Analysis stages (steps 2-8 of the plan). Install with: uv sync --extra analysis
 analysis = [
-    "scikit-learn>=1.5",
     "xgboost>=2.1",
     "sentence-transformers>=3",
     "hdbscan>=0.8.38",

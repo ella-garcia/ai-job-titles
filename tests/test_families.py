@@ -28,6 +28,22 @@ def test_family(title, expected):
     assert family(title) == expected
 
 
+@pytest.mark.parametrize("title", [
+    "Senior Mixed Signal Design Engineer",
+    "Senior Physical Design Engineer",
+    "Sr. Mechanical Design Engineer, Data Center Design Engineering",
+    "Senior ASIC Design Engineer",
+    "Innovation and Design Engineer, Worldwide Design Engineering",
+])
+def test_hardware_design_engineers_are_not_designers(title):
+    assert family(title) == "other"
+
+
+def test_product_design_roles_still_count():
+    assert family("Design Engineer") == "designer"
+    assert family("Senior or Staff Product Designer, Design Systems") == "designer"
+
+
 def test_ai_needs_word_boundary():
     # 'ai' inside a word ('maintain', 'email') must not count
     assert family("Email Marketing Engineer") == "other"

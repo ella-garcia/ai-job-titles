@@ -46,11 +46,23 @@ def fetch_hn(date: str = TODAY) -> pd.DataFrame:
         from datasets import load_dataset
 
         ds = load_dataset(HF_DATASET)
-        print(ds)  # check column names before mapping to the postings schema
-        df = ds[list(ds)[0]].to_pandas()
+        df = explode_hf_threads(ds[list(ds)[0]].to_pandas())
         df.to_parquet(path)
         log_download("hn_huggingface", f"hf://datasets/{HF_DATASET}", path, rows=len(df), licence="see dataset card")
     return df
+
+
+def explode_hf_threads(threads: pd.DataFrame) -> pd.DataFrame:
+    """Hugging Face rows are one thread each (month, type, parent_id, comments[]).
+    Return one row per comment in the same columns as the BigQuery query: id, thread_id, thread_date, text.
+    Keeps only "Who is hiring" threads (type 'permanent'); drops usernames."""
+    rows = []
+    for _, t in threads[threads["type"] == "permanent"].iterrows():
+        thread_date = pd.to_datetime("1 " + t["month"], format="%d %B %Y")
+        for c in t["comments"]:
+            if c.get("text"):
+                rows.append({"id": c["id"], "thread_id": t["parent_id"], "thread_date": thread_date, "text": c["text"]})
+    return pd.DataFrame(rows, columns=["id", "thread_id", "thread_date", "text"])
 
 
 def monthly_check(df: pd.DataFrame) -> tuple[pd.Series, list[str]]:
