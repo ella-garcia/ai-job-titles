@@ -1,0 +1,65 @@
+[project]
+name = "ai-job-titles"
+version = "0.1.0"
+description = "Are AI job titles new roles or rebrands? Classic NLP on job postings, 2011 to today."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+dependencies = [
+    "pandas>=2.2",
+    "pyarrow>=16",
+    "numpy>=1.26",
+    "requests>=2.32",
+    "pyyaml>=6",
+    "python-dotenv>=1",
+    "matplotlib>=3.8",
+    "google-cloud-bigquery>=3.25",
+    "db-dtypes>=1.2",
+    "datasets>=2.20",
+    "kaggle>=1.6",
+]
+
+[project.optional-dependencies]
+# Analysis stages (steps 2-8 of the plan). Install with: uv sync --extra analysis
+analysis = [
+    "scikit-learn>=1.5",
+    "xgboost>=2.1",
+    "sentence-transformers>=3",
+    "hdbscan>=0.8.38",
+    "umap-learn>=0.5.6",
+    "bertopic>=0.16",
+    "datasketch>=1.6",
+    "rapidfuzz>=3.9",
+    "gensim>=4.3",
+    "nltk>=3.9",
+    "spacy>=3.7",
+    "presidio-analyzer>=2.2",
+    "presidio-anonymizer>=2.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "pre-commit>=3.8",
+    "nbstripout>=0.7",
+    "ipykernel>=6.29",
+    "jupyterlab>=4.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["I001", "E402", "E702", "F401"]   # notebook cells import as they go
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

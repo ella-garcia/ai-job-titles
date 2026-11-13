@@ -1,0 +1,17 @@
+# Installed by `make setup`. Runs on every commit.
+repos:
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.7.1
+    hooks:
+      - id: nbstripout          # strips notebook outputs so no posting text reaches the public repo
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=1000]    # catches data files committed by mistake
+      - id: detect-private-key

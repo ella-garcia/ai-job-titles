@@ -1,0 +1,42 @@
+# Weekly job-board pull. Copy this file to .github/workflows/weekly-pull.yml in the PRIVATE
+# data repo (ella-garcia/ai-job-titles-data), not this public repo: the output is scraped text.
+# The weekly commit also keeps the schedule alive (GitHub pauses schedules after 60 days without activity).
+name: weekly-pull
+on:
+  schedule:
+    - cron: "0 6 * * 1"        # Mondays 06:00 UTC
+  workflow_dispatch: {}
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out the data repo (this repo)
+        uses: actions/checkout@v4
+      - name: Check out the code repo
+        uses: actions/checkout@v4
+        with:
+          repository: ella-garcia/ai-job-titles
+          path: code
+          # The code repo is private: add a fine-grained token with read access to it
+          # as the secret CODE_REPO_TOKEN in this repo (Settings -> Secrets and variables -> Actions).
+          token: ${{ secrets.CODE_REPO_TOKEN }}
+      - uses: astral-sh/setup-uv@v3
+      - name: Pull boards and big employers
+        working-directory: code
+        env:
+          AJT_DATA: ${{ github.workspace }}/snapshots
+        run: |
+          uv sync
+          uv run python -m pipeline boards
+          uv run python -m pipeline employers || true   # a rate-limited employer must not lose the boards
+      - name: Commit the snapshot
+        run: |
+          git config user.name "weekly-pull"
+          git config user.email "weekly-pull@users.noreply.github.com"
+          git add snapshots/raw snapshots/manifest.csv
+          git commit -m "Weekly pull $(date -u +%F)" || echo "nothing new"
+          git push

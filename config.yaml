@@ -1,0 +1,106 @@
+# All project parameters. Code reads from here; no magic numbers in modules.
+repo: ella-garcia/ai-job-titles      # used in the User-Agent we send to job sites
+seed: 42
+
+periods:                              # P0 pre-ChatGPT, P1 first wave, P2 deployment wave
+  P0: ['2010-01-01', '2022-11-29']
+  P1: ['2022-11-30', '2024-12-31']
+  P2: ['2025-01-01', '2099-12-31']
+
+# Role families: first matching pattern wins, so order matters. Case-insensitive.
+families:
+  fde: 'forward[- ]deployed|deployment strateg'
+  sa_ce: 'solutions? architect|customer engineer|solutions? engineer|arquitect[oa]s?(/a)? de soluciones|preventa|pre-?sales'
+  ai_pm: '\bai\b.*product manager|product manager.*\bai\b'
+  pm: 'product manager'
+  designer: '(product|ux) designer|design engineer'
+  so_gtm: 'gtm engineer|strategy (&|and) operations|revops|revenue operations'
+  legal: 'legal engineer|legal operations|legal ops'
+  prompt: 'prompt engineer'
+  # Added for big employers and consulting; not in the plan's six families (open decision)
+  ai_eng: '\b(ai|ml|llm|genai|machine learning)\b.*engineer|ingenier[oa](/a)?.*\b(ia|inteligencia artificial|machine learning)\b'
+  ai_consultant: '\b(ai|genai|generative ai|machine learning)\b.*consultant|consultant.*\b(ai|genai)\b|consultor[a]?(/a)?.*\b(ia|inteligencia artificial)\b'
+
+spain_pattern: 'spain|españa|madrid|barcelona|valencia|m[aá]laga|sevilla|seville|bilbao|, es\b|\bes\)'
+
+# --- Full job boards: every open role. Checked 2026-11-13. ---
+boards:
+  greenhouse: [anthropic, scaleai, databricks, gleanwork, thoughtworks, a16z]
+  lever: [palantir]
+  ashby: [openai, cohere, sierra, harvey, snowflake, ycombinator]
+
+company_group:
+  anthropic: ai_native
+  openai: ai_native
+  cohere: ai_native
+  scaleai: ai_native
+  sierra: ai_native
+  harvey: ai_native
+  gleanwork: ai_native
+  palantir: data_software
+  databricks: data_software
+  snowflake: data_software
+  thoughtworks: consulting
+  a16z: vc_accelerator          # the firm's own roles
+  ycombinator: vc_accelerator
+
+# --- Big employers with public search APIs: searched by keyword. Checked 2026-11-13. ---
+# Not reachable without a bot check or private API (do not work around it): Apple, Google, Meta, Tesla,
+# Deloitte, KPMG, EY, McKinsey, BCG, Bain, SAP. Cover them with H-1B LCA filings and Kaggle LinkedIn.
+employers:
+  amazon:         {group: mag7,       system: amazon}
+  microsoft:      {group: mag7,       system: microsoft, max_per_term: 50}   # rate-limits hard
+  nvidia:         {group: mag7,       system: workday, host: nvidia.wd5, tenant: nvidia, site: NVIDIAExternalCareerSite}
+  accenture:      {group: consulting, system: workday, host: accenture.wd103, tenant: accenture, site: AccentureCareers}
+  pwc:            {group: consulting, system: workday, host: pwc.wd3, tenant: pwc, site: Global_Experienced_Careers}
+  capgemini:      {group: consulting, system: capgemini}
+  salesforce:     {group: large_tech, system: workday, host: salesforce.wd12, tenant: salesforce, site: External_Career_Site}
+  cisco:          {group: large_tech, system: workday, host: cisco.wd5, tenant: cisco, site: Cisco_Careers}
+  servicenow:     {group: large_tech, system: smartrecruiters, company: ServiceNow}
+  att:            {group: telco,      system: workday, host: att.wd1, tenant: att, site: ATTGeneral}
+  tmobile:        {group: telco,      system: workday, host: tmobile.wd1, tenant: tmobile, site: External}
+  telefonica:     {group: telco,      system: successfactors, host: jobs.telefonica.com}
+  telefonicatech: {group: telco,      system: smartrecruiters, company: telefonicatech}
+  vodafone:       {group: telco,      system: successfactors, host: opportunities.vodafone.com}
+
+search_terms:
+  - forward deployed
+  - deployment strategist
+  - solutions architect
+  - customer engineer
+  - solutions engineer
+  - product manager
+  - product designer
+  - design engineer
+  - gtm engineer
+  - revenue operations
+  - strategy operations
+  - legal engineer
+  - legal operations
+  - prompt engineer
+  - ai engineer
+  - ai consultant
+  - arquitecto de soluciones      # Spanish: Telefónica and Spain-based roles
+  - preventa
+  - inteligencia artificial
+
+max_per_term: 200                  # listings per employer per search term (override per employer)
+min_interval:                      # seconds between requests to one host (default below)
+  default: 1.0
+  apply.careers.microsoft.com: 10.0
+
+# --- Wayback coverage test (week-1 gate) ---
+wayback:
+  prefixes:
+    palantir: ['jobs.lever.co/palantir/', 'palantir.com/careers']
+    openai: ['boards.greenhouse.io/openai', 'jobs.lever.co/openai/', 'jobs.ashbyhq.com/openai']
+    anthropic: ['boards.greenhouse.io/anthropic', 'jobs.lever.co/anthropic/']
+    scaleai: ['boards.greenhouse.io/scaleai', 'jobs.lever.co/scaleai/']
+    google_cloud: ['careers.google.com/jobs/results/']
+  snapshots_per_cell: 20           # snapshots checked per prefix x period
+  min_interval: 1.0
+pass_mark: 30                      # suggested usable postings per family per period (not yet agreed)
+
+kaggle:
+  kaggle_li_2023_24: arshkon/linkedin-job-postings
+  kaggle_li_1m3_2024: asaniczka/1-3m-linkedin-jobs-and-skills-2024
