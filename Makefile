@@ -1,6 +1,6 @@
 PY := uv run python -m pipeline
 
-.PHONY: setup analysis-deps test lint week1 boards employers wayback hn kaggle summary notebook
+.PHONY: setup analysis-deps test lint week1 boards employers wayback hn kaggle summary notebook snapshots
 
 setup:            ## install Python 3.11 + pinned deps, git hooks, and a .env to fill in
 	uv sync
@@ -39,3 +39,9 @@ summary:          ## coverage tables + week1_summary.json in runs/<date>/
 
 notebook:
 	uv run jupyter lab notebooks/
+
+snapshots:        ## fetch the weekly snapshots (data branch) and copy new files into AJT_DATA/raw
+	git fetch -q origin data
+	@test -d .snapshots || git worktree add -q --detach .snapshots origin/data
+	git -C .snapshots checkout -q --detach origin/data
+	$(PY) sync-snapshots
