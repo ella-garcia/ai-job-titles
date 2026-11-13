@@ -1,0 +1,4 @@
+snapshots/runs/
+snapshots/cache/
+snapshots/processed/
+.DS_Store
