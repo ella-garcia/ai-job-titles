@@ -60,11 +60,17 @@ The week-1 go/no-go gate. For each prefix in `config.yaml`: count archived posti
 - Scale AI's Lever board has ~50 posting URLs from before December 2022 (P0); all sampled pages were usable.
 - Pass mark (suggested, not agreed): 30 usable postings per family per period.
 
-Raw snapshots are fetched from `https://web.archive.org/web/<timestamp>id_/<url>` at most once a second and cached in `cache/wayback/` so an interrupted run resumes.
+Raw snapshots are fetched from `https://web.archive.org/web/<timestamp>id_/<url>` at most once a second and cached in `cache/wayback/` so an interrupted run resumes. Failed downloads are not kept in the cache, so a re-run retries them.
+
+**The Archive refuses connections after heavy use** (seen twice on 2026-11-13). Run the gate once, not repeatedly, and if it stalls, wait an hour and re-run: finished work is cached.
+
+First partial results (2026-11-13), estimated usable postings: Palantir Lever board ~450 and old palantir.com careers ~340, both before Dec 2022; OpenAI Greenhouse ~130 before Dec 2022 and ~290 for Dec 2022–2024; OpenAI Lever ~60 before Dec 2022. Palantir Lever after 2022, OpenAI Ashby, Anthropic, Scale AI and Google Cloud still to check.
 
 ## 4. HN "Who is Hiring" (`make hn`)
 
 BigQuery `bigquery-public-data.hacker_news.full` when `GCP_PROJECT` is set (the run prints the GB scanned first; free tier 1,000 GB a month), otherwise the [Hugging Face copy](https://huggingface.co/datasets/brusic/hacker-news-who-is-hiring-posts). Check the month-by-month counts from April 2011: missing months mean the thread wasn't posted by `whoishiring`.
+
+The Hugging Face copy stores one row per monthly thread with its comments nested; the loader unpacks it to one row per comment (same columns as the BigQuery query) and drops usernames. Checked 2026-11-13: 184 "Who is hiring" threads, April 2011 to September 2026, missing July 2011, April 2015 and May 2015.
 
 ## 5. Kaggle LinkedIn sets (`make kaggle`)
 

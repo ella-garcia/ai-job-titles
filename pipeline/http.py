@@ -28,7 +28,15 @@ def polite(method: str, url: str, *, headers: dict | None = None, max_tries: int
         if wait > 0:
             time.sleep(wait)
         _last_call[host] = time.time()
-        response = requests.request(method, url, headers=hdrs, timeout=timeout, **kwargs)
+        try:
+            response = requests.request(method, url, headers=hdrs, timeout=timeout, **kwargs)
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            if attempt == max_tries - 1:
+                raise
+            delay = 30 * (attempt + 1)
+            print(f"  connection problem with {host} ({type(exc).__name__}); waiting {delay}s")
+            time.sleep(delay)
+            continue
         if response.status_code == 429 or response.status_code >= 500:
             try:
                 delay = float(response.headers.get("Retry-After", ""))

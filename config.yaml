@@ -21,6 +21,10 @@ families:
   ai_eng: '\b(ai|ml|llm|genai|machine learning)\b.*engineer|ingenier[oa](/a)?.*\b(ia|inteligencia artificial|machine learning)\b'
   ai_consultant: '\b(ai|genai|generative ai|machine learning)\b.*consultant|consultant.*\b(ai|genai)\b|consultor[a]?(/a)?.*\b(ia|inteligencia artificial)\b'
 
+# Titles that match a family pattern but are a different job: labelled 'other' before families are tried.
+# Hardware, chip and facilities "design engineers" (Nvidia, Amazon data centers) are not product designers.
+exclude_titles: '\b(asic|chip|circuit|physical|mask|mixed[- ]signal|analog|rfic|rf|sram|mechanical|electrical|controls|layout|rtl|fpga|silicon|hardware|packaging|power|civil|structural|hvac|optical|thermal)\b.*design engineer|data center design|design engineering\b'
+
 spain_pattern: 'spain|españa|madrid|barcelona|valencia|m[aá]laga|sevilla|seville|bilbao|, es\b|\bes\)'
 
 # --- Full job boards: every open role. Checked 2026-11-13. ---

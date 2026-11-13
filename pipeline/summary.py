@@ -6,14 +6,16 @@ import pandas as pd
 from .boards import board_titles
 from .config import TODAY, run_dir
 from .employers import load_employers
+from .families import family
 
 
 def all_titles(date: str = TODAY) -> pd.DataFrame:
     boards = board_titles(date)
     emp = load_employers(date)
     if len(emp):
-        emp = (emp.rename(columns={"employer": "company"})[["group", "company", "title", "family", "spain"]]
+        emp = (emp.rename(columns={"employer": "company"})[["group", "company", "title", "spain"]]
                .assign(source="search"))
+        emp["family"] = emp.title.map(family)  # relabel, so pattern fixes apply to old snapshots
     return pd.concat([boards, emp], ignore_index=True)
 
 
