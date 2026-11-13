@@ -14,6 +14,7 @@ import time
 from html import unescape
 
 import pandas as pd
+import requests
 
 from .config import CFG, TODAY, data_dir
 from .families import family, is_spain
@@ -40,6 +41,8 @@ def search_workday(cfg: dict, term: str):
             total = d.get("total", 0)  # later pages report total = 0
         posts = d.get("jobPostings", [])
         for p in posts:
+            if not p.get("externalPath"):  # some listings (e.g. Accenture, T-Mobile) have no job link
+                continue
             yield dict(id=p["externalPath"], title=p.get("title", ""), location=p.get("locationsText"),
                        posted=p.get("postedOn"),
                        url=f"https://{cfg['host']}.myworkdayjobs.com/en-US/{cfg['site']}{p['externalPath']}")
@@ -170,30 +173,57 @@ SEARCH = {"workday": search_workday, "amazon": search_amazon, "microsoft": searc
 DETAIL = {"workday": detail_workday, "microsoft": detail_microsoft, "smartrecruiters": detail_smartrecruiters}
 
 
-def collect_employer(name: str, cfg: dict, terms: list[str]) -> list[dict]:
-    seen: dict[str, dict] = {}
+def collect_employer(name: str, cfg: dict, terms: list[str], seen: dict[str, dict], done: list[str]) -> None:
+    """Search every term not yet in `done`, then fetch missing details. Updates `seen` and `done` in
+    place, so if a request fails part-way the caller can save the progress and resume later."""
     for term in terms:
+        if term in done:
+            continue
         for rec in SEARCH[cfg["system"]](cfg, term):
             key = str(rec["id"])
             if key in seen:
-                seen[key]["terms"].append(term)
+                if term not in seen[key]["terms"]:
+                    seen[key]["terms"].append(term)
                 continue
             rec.update(employer=name, group=cfg["group"], system=cfg["system"], terms=[term],
                        family=family(rec["title"]), observed=TODAY)
             seen[key] = rec
+        done.append(term)
     if cfg["system"] in DETAIL:
         for rec in seen.values():
-            if rec["family"] != "other" and not rec.get("text"):
+            if rec["family"] != "other" and not rec.get("text") and not rec.get("text_error"):
                 try:
                     rec.update(DETAIL[cfg["system"]](cfg, rec))
+                except requests.HTTPError as exc:
+                    if exc.response is not None and exc.response.status_code == 429:
+                        raise  # rate-limited: stop and resume later rather than mark every posting failed
+                    rec["text_error"] = str(exc)[:200]
                 except Exception as exc:
                     rec["text_error"] = str(exc)[:200]
     for rec in seen.values():
         rec["spain"] = is_spain(str(rec.get("location") or ""), str(rec.get("country") or ""))
-    return list(seen.values())
+
+
+def _write_jsonl(path, records) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    with gzip.open(tmp, "wt", encoding="utf-8") as fh:
+        for rec in records:
+            fh.write(json.dumps(rec, default=str) + "\n")
+    tmp.replace(path)
+
+
+def _read_jsonl(path) -> list[dict]:
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        return [json.loads(line) for line in fh]
 
 
 def fetch_employers(only: list[str] | None = None, terms: list[str] | None = None, date: str = TODAY) -> None:
+    """Search each employer and save `<name>.jsonl.gz` when it finishes.
+
+    If an employer fails part-way (usually HTTP 429), what it collected is saved as
+    `<name>.partial.jsonl.gz` plus `<name>.progress.json` (search terms finished), and the next run on
+    the same day resumes from there.
+    """
     out = data_dir() / "raw" / "employers" / date
     out.mkdir(parents=True, exist_ok=True)
     terms = terms or CFG["search_terms"]
@@ -201,20 +231,27 @@ def fetch_employers(only: list[str] | None = None, terms: list[str] | None = Non
         if only and name not in only:
             continue
         path = out / f"{name}.jsonl.gz"
+        partial, progress = out / f"{name}.partial.jsonl.gz", out / f"{name}.progress.json"
         if path.exists():
             print(f"already have {name}")
             continue
+        seen = {str(r["id"]): r for r in _read_jsonl(partial)} if partial.exists() else {}
+        done = json.loads(progress.read_text())["terms_done"] if progress.exists() else []
+        if seen or done:
+            print(f"resuming {name}: {len(done)}/{len(terms)} terms done, {len(seen)} listings so far")
         t0 = time.time()
         try:
-            records = collect_employer(name, cfg, terms)
+            collect_employer(name, cfg, terms, seen, done)
         except Exception as exc:
-            print(f"FAILED {name}: {exc}  (re-run to retry; finished employers are skipped)")
+            _write_jsonl(partial, seen.values())
+            progress.write_text(json.dumps({"terms_done": done}))
+            print(f"FAILED {name} after {len(done)}/{len(terms)} terms, {len(seen)} listings saved: {exc}"
+                  "  (re-run today to resume)")
             continue
-        tmp = path.with_suffix(".tmp")
-        with gzip.open(tmp, "wt", encoding="utf-8") as fh:
-            for rec in records:
-                fh.write(json.dumps(rec, default=str) + "\n")
-        tmp.rename(path)
+        records = list(seen.values())
+        _write_jsonl(path, records)
+        partial.unlink(missing_ok=True)
+        progress.unlink(missing_ok=True)
         log_download(f"employer_{cfg['system']}", f"{cfg['system']}:{name}", path, rows=len(records),
                      licence="scraped: aggregates only")
         n_target = sum(r["family"] != "other" for r in records)
@@ -222,8 +259,10 @@ def fetch_employers(only: list[str] | None = None, terms: list[str] | None = Non
 
 
 def load_employers(date: str = TODAY) -> pd.DataFrame:
+    """Finished employers only (partial results from interrupted runs are left out)."""
     rows = []
-    for path in sorted((data_dir() / "raw" / "employers" / date).glob("*.jsonl.gz")):
+    folder = data_dir() / "raw" / "employers" / date
+    for path in sorted(p for p in folder.glob("*.jsonl.gz") if not p.name.endswith(".partial.jsonl.gz")):
         with gzip.open(path, "rt", encoding="utf-8") as fh:
             rows += [json.loads(line) for line in fh]
     return pd.DataFrame(rows)
