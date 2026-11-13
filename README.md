@@ -56,7 +56,11 @@ To share data between collaborators, point `AJT_DATA` at a shared Google Drive f
 
 ## Weekly pull
 
-Live job boards only show today's roles, so they are pulled every week by a scheduled GitHub Action. The workflow lives in the private data repo `ella-garcia/ai-job-titles-data`, because its output is scraped text; [ops/weekly-pull.yml](ops/weekly-pull.yml) is the copy kept here. It needs the secret `CODE_REPO_TOKEN` in the data repo (a fine-grained token with read access to this repo).
+Live job boards only show today's roles, so a scheduled GitHub Action ([weekly-pull.yml](.github/workflows/weekly-pull.yml)) pulls the boards and big employers every Monday and commits them to the **`data` branch** of this repo. That branch holds only snapshots and shares no history with `main`, so code work never touches it. Run it by hand from *Actions → weekly-pull → Run workflow*.
+
+To use the snapshots locally, run `make snapshots`: it checks out the `data` branch in `.snapshots/` (git-ignored) and copies new files into your `AJT_DATA/raw/`.
+
+**Before this repo is made public, delete the `data` branch** (it holds scraped posting text), or publish a fresh copy of `main` as a new public repo.
 
 ## Repo layout
 
@@ -65,8 +69,7 @@ Live job boards only show today's roles, so they are pulled every week by a sche
 ├── pipeline/          # collection code (boards, employers, wayback, hn, kaggle, summary)
 ├── notebooks/         # thin runners; logic stays in pipeline/ and q*/
 ├── tests/
-├── docs/              # data sources, developer notes, GPU/Colab
-└── ops/               # weekly-pull workflow for the private data repo
+└── docs/              # data sources, developer notes, GPU/Colab
 ```
 
 Analysis folders (`q1_rebrand/` … `q9_h1b_classification/`, `validation/`, `figures/`) are added as each step starts. Their dependencies install with `make analysis-deps`.

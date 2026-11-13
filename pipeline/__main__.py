@@ -1,8 +1,9 @@
 """Command line: `python -m pipeline <step>` (or `make <step>`).
 
-Steps: boards, employers, wayback, hn, kaggle, summary, env.
+Steps: boards, employers, wayback, hn, kaggle, summary, env, sync-snapshots.
 """
 import argparse
+import shutil
 import subprocess
 import sys
 
@@ -25,6 +26,29 @@ def record_environment() -> None:
     (out / "git-commit.txt").write_text(note + "\n")
 
 
+def sync_snapshots() -> None:
+    """Copy weekly snapshots from the local data-branch checkout (.snapshots/) into AJT_DATA/raw.
+
+    Only new files are copied; nothing in AJT_DATA is overwritten or deleted.
+    """
+    if not (ROOT / ".snapshots").exists():
+        print("No .snapshots/ checkout yet: run `make snapshots`.")
+        return
+    src = ROOT / ".snapshots" / "snapshots" / "raw"
+    if not src.exists():
+        print("The data branch has no snapshots yet: the weekly-pull workflow hasn't run.")
+        return
+    dst = data_dir() / "raw"
+    copied = 0
+    for path in sorted(src.rglob("*")):
+        target = dst / path.relative_to(src)
+        if path.is_file() and not target.exists():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, target)
+            copied += 1
+    print(f"Copied {copied} new snapshot files into {dst}")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="python -m pipeline")
     sub = parser.add_subparsers(dest="step", required=True)
@@ -37,6 +61,7 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("kaggle", help="Kaggle LinkedIn sets")
     sub.add_parser("summary", help="coverage tables and week-1 summary")
     sub.add_parser("env", help="record package versions and git commit")
+    sub.add_parser("sync-snapshots", help="copy weekly snapshots from .snapshots/ into AJT_DATA")
     args = parser.parse_args(argv)
 
     seed_everything()
@@ -65,6 +90,8 @@ def main(argv: list[str] | None = None) -> None:
         from .summary import coverage, week1_summary
         print(coverage().to_string())
         print(week1_summary())
+    elif args.step == "sync-snapshots":
+        sync_snapshots()
     print(f"Results in {run_dir()}")
 
 

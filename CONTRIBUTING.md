@@ -4,7 +4,7 @@ Two authors, one repo. These rules keep results reproducible and keep scraped te
 
 ## One-time setup (each of us)
 
-1. Get access: the repo owner adds you as a collaborator on GitHub (*Settings → Collaborators*), on both `ai-job-titles` (public, code) and `ai-job-titles-data` (private, weekly snapshots).
+1. Get access: the repo owner adds you as a collaborator on `ella-garcia/ai-job-titles` (*Settings → Collaborators*). It is private; code is on `main`, weekly snapshots on the `data` branch.
 2. Clone and set up:
 
    ```bash
@@ -22,14 +22,15 @@ Two authors, one repo. These rules keep results reproducible and keep scraped te
 ## Day to day
 
 - **Branch per task, pull request to `main`.** Name branches after the question: `q1-classifier`, `pipeline-sectioner`. The other author reviews before merging; CI must pass.
-- **Pull before you start:** `git pull`, then `uv sync` if `uv.lock` changed.
+- **Pull before you start:** `git pull`, then `uv sync` if `uv.lock` changed. `make snapshots` brings in the latest weekly snapshots.
+- **Never commit to the `data` branch by hand.** Only the weekly-pull workflow writes there. Branch from `main`, not from `data`.
 - **Dependencies:** `uv add <package>` (or `uv add --optional analysis <package>`), commit `pyproject.toml` and `uv.lock` together, then regenerate `requirements.txt` for Colab: `uv export --no-hashes --no-dev -o requirements.txt`.
 - **Parameters go in `config.yaml`**, not in code.
 - **Notebooks are thin.** Anything a figure or number depends on lives in `pipeline/` or `q*/`, with a test.
 
 ## Data rules
 
-- **Never commit data.** `.gitignore` blocks the data folder, Parquet and gzipped JSONL; a pre-commit hook blocks files over 1 MB.
+- **Never commit data to `main`.** `.gitignore` blocks the data folder, Parquet and gzipped JSONL; a pre-commit hook blocks files over 1 MB. Data reaches git only through the weekly workflow, on the `data` branch.
 - **Notebook outputs are stripped on commit** (`nbstripout` hook), because a printed posting would end up in the public repo. Don't paste posting text into markdown cells either.
 - **Don't run the same collection step at the same time.** Both laptops write to the same Drive folder. Agree who runs `make week1` on a given day (by default, whoever owns the Data workstream).
 - **Downloads are logged in `manifest.csv`** automatically. If you add a source by hand, add a row.

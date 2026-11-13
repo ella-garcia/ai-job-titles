@@ -40,9 +40,9 @@ Store everything under `<AJT_DATA>/raw/<source>/<download-date>/`, outside git (
 | Indeed AI Tracker | `github.com/hiring-lab/ai-tracker` CSVs | CC BY 4.0: cite Indeed Hiring Lab. |
 | nothiring Spain report | [Tech job market in Spain, Q3 2026](https://nothiring.me/blog/tech-job-market-spain) (recruiting agency, 19,526 jobs, Jul–Sep 2026) | Benchmark to cite, not data: no download. Useful numbers: 75 FDE jobs in Spain (61% describe direct client work); IT services and consulting post 42% of tech jobs and 46% of AI Engineer jobs; 33% of ads relate to AI. Method differs from ours, so compare orders of magnitude only. |
 
-**Weekly live pull:** a scheduled GitHub Actions workflow ([`ops/weekly-pull.yml`](../ops/weekly-pull.yml)) runs `python -m pipeline boards` and `employers` and commits `raw/boards/<date>/` and `raw/employers/<date>/` to the private data repo. Start this in week 1; missed weeks cannot be recovered.
+**Weekly live pull:** a scheduled GitHub Actions workflow ([`.github/workflows/weekly-pull.yml`](../.github/workflows/weekly-pull.yml)) runs `python -m pipeline boards` and `employers` and commits `snapshots/raw/boards/<date>/` and `snapshots/raw/employers/<date>/` to the `data` branch of this repo (an orphan branch: no shared history with `main`). `make snapshots` copies them into `AJT_DATA`. Start this in week 1; missed weeks cannot be recovered.
 
-- The workflow lives in, and commits its output to, a **private** repo `ai-job-titles-data`. A git-ignored folder on an Actions runner is deleted when the job ends, and raw text cannot go in the public repo. The weekly commit also keeps the schedule alive (GitHub disables scheduled workflows in public repos after 60 days without activity).
+- One repo, kept **private** while the `data` branch exists: the branch holds scraped text. Before going public, delete the branch or publish a fresh copy of `main`. Board snapshots are gzipped (~5 MB a week); clone with `--single-branch` to skip them.
 - Board names that respond (checked 2026-11-13). Greenhouse: `anthropic`, `scaleai`, `databricks`, `gleanwork`. Lever: `palantir`. Ashby: `openai`, `cohere`, `sierra`, `harvey`, `snowflake`. Mistral AI was not found under the obvious names.
 - Also on these boards: Thoughtworks (consulting) and the VC firms' own roles, a16z (Greenhouse) and Y Combinator (Ashby).
 - **Big employers** (Magnificent 7, consulting, large tech, telcos) are not on these three systems. Those with a public search API are searched by role keyword and stored as `raw/employers/<date>/<employer>.jsonl.gz`. Covered: Amazon, Microsoft, Nvidia, Accenture, PwC, Capgemini, Salesforce, Cisco, ServiceNow, AT&T, T-Mobile, Telefónica, Telefónica Tech, Vodafone. Endpoints, pacing and the list of firms not reachable are in `docs/DATA_SOURCES.md` §2. This solves most of the P2 SA / Customer Engineer sample; Google Cloud is the main gap.
@@ -153,7 +153,6 @@ ai-job-titles/
 ├── Makefile
 ├── pyproject.toml   # + uv.lock: pinned environment
 ├── docs/            # data sources, these notes, GPU/Colab
-├── ops/             # weekly-pull workflow for the private data repo
 ├── notebooks/       # thin runners
 ├── pipeline/        # collect, clean, section, normalise, label families, Presidio
 ├── q1_rebrand/
