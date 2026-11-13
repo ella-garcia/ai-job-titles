@@ -1,0 +1,25 @@
+source,url,date,file,sha256,rows,licence
+board_greenhouse,https://boards-api.greenhouse.io/v1/boards/anthropic/jobs?content=true,2026-11-13,raw/boards/2026-11-13/greenhouse_anthropic.json.gz,492c7151e12d7775ee76f78f9303d292d1ee2632f2ada43c23ba4f20ccc53270,670,scraped: aggregates only
+board_greenhouse,https://boards-api.greenhouse.io/v1/boards/scaleai/jobs?content=true,2026-11-13,raw/boards/2026-11-13/greenhouse_scaleai.json.gz,f94ff4aa18f7f5782637e97734879e3e0becf16f5b888f7fe5050ae2d2f5b345,171,scraped: aggregates only
+board_greenhouse,https://boards-api.greenhouse.io/v1/boards/databricks/jobs?content=true,2026-11-13,raw/boards/2026-11-13/greenhouse_databricks.json.gz,3bced38d45f45b4a8be99143e8bbc65a21a409f83904b4b050f0fcdc15e255da,906,scraped: aggregates only
+board_greenhouse,https://boards-api.greenhouse.io/v1/boards/gleanwork/jobs?content=true,2026-11-13,raw/boards/2026-11-13/greenhouse_gleanwork.json.gz,46b5e493e914fd88af7f7f2d77852d94b3ddc4ec2e8bdc95364989c5cb40dbb6,120,scraped: aggregates only
+board_greenhouse,https://boards-api.greenhouse.io/v1/boards/thoughtworks/jobs?content=true,2026-11-13,raw/boards/2026-11-13/greenhouse_thoughtworks.json.gz,3c99764e7c27837c2907b1ae07cbf63d1b90931be7d85599626068e7dc3290c9,47,scraped: aggregates only
+board_greenhouse,https://boards-api.greenhouse.io/v1/boards/a16z/jobs?content=true,2026-11-13,raw/boards/2026-11-13/greenhouse_a16z.json.gz,1006a93606f1dca87103a60287ebfd700acf58324065ab78407f64444b33cb2f,23,scraped: aggregates only
+board_lever,https://api.lever.co/v0/postings/palantir?mode=json,2026-11-13,raw/boards/2026-11-13/lever_palantir.json.gz,cc7ac7169007a010263b06a3e482f0f48960648b4e1e0bb8ee38711f64c7823c,301,scraped: aggregates only
+board_ashby,https://api.ashbyhq.com/posting-api/job-board/openai,2026-11-13,raw/boards/2026-11-13/ashby_openai.json.gz,a0e51fb8956211de67069cd5b4a49cd733befdae026b044376cf06d95181de9b,831,scraped: aggregates only
+board_ashby,https://api.ashbyhq.com/posting-api/job-board/cohere,2026-11-13,raw/boards/2026-11-13/ashby_cohere.json.gz,0b40a7d239b0860b11617abc5c930000b458a45ed114d401d224ae3285a11f8f,121,scraped: aggregates only
+board_ashby,https://api.ashbyhq.com/posting-api/job-board/sierra,2026-11-13,raw/boards/2026-11-13/ashby_sierra.json.gz,8fbb2fb454cad9672e3e33a218d3bb1b66a5f2e6d3b65fa223e5d067b2ce8502,198,scraped: aggregates only
+board_ashby,https://api.ashbyhq.com/posting-api/job-board/harvey,2026-11-13,raw/boards/2026-11-13/ashby_harvey.json.gz,3051031ea75dc01dead4bba4a4887f3e50417c3589c04fd2dd8769ee6b4a5dce,375,scraped: aggregates only
+board_ashby,https://api.ashbyhq.com/posting-api/job-board/snowflake,2026-11-13,raw/boards/2026-11-13/ashby_snowflake.json.gz,ed42810095349ecd1eb860a8337f6f634d1034ca767479b55d9d43de4a379757,376,scraped: aggregates only
+board_ashby,https://api.ashbyhq.com/posting-api/job-board/ycombinator,2026-11-13,raw/boards/2026-11-13/ashby_ycombinator.json.gz,66139587ae1343e218a0e2968593b32a97daff1c96d311f743b8327cd1958f63,9,scraped: aggregates only
+employer_amazon,amazon:amazon,2026-11-13,raw/employers/2026-11-13/amazon.jsonl.gz,48e9c5e898b31acefb9b7821c49fee6eca52ae1fc7a2f2422839052e34918c89,1813,scraped: aggregates only
+employer_workday,workday:nvidia,2026-11-13,raw/employers/2026-11-13/nvidia.jsonl.gz,69da08dfc1b1166e03c53be1ecb28411143add0dccfb4a414c0b8ed19a19e38d,1377,scraped: aggregates only
+employer_workday,workday:pwc,2026-11-13,raw/employers/2026-11-13/pwc.jsonl.gz,2e665463b961cf3cfdad5e2ee316808d67251cb8b6450f8063d3d1a9ff6070fc,1004,scraped: aggregates only
+employer_capgemini,capgemini:capgemini,2026-11-13,raw/employers/2026-11-13/capgemini.jsonl.gz,3e5d4ffb321982edf4e8c3f43eb4f2413fcf7492269e2ae82bae3e56194e34bf,2050,scraped: aggregates only
+employer_workday,workday:salesforce,2026-11-13,raw/employers/2026-11-13/salesforce.jsonl.gz,bb244c2e186901ac2d6dc0b59d9d52edfdc41a63a2e692c4776e5dd4d4c304e0,827,scraped: aggregates only
+employer_workday,workday:cisco,2026-11-13,raw/employers/2026-11-13/cisco.jsonl.gz,4a3cee37279c8431ad662a14d59b50965bda5abba644f03e81e3368cce8b83c6,749,scraped: aggregates only
+employer_smartrecruiters,smartrecruiters:servicenow,2026-11-13,raw/employers/2026-11-13/servicenow.jsonl.gz,5137e6f2100143421cef15edae090f68b25a5236229963ffba0ab8afe9837157,528,scraped: aggregates only
+employer_workday,workday:att,2026-11-13,raw/employers/2026-11-13/att.jsonl.gz,80adcb70f8d5974da476ea936951ff1a4b9819ef5d58857c4d137430f5fa82f6,414,scraped: aggregates only
+employer_successfactors,successfactors:telefonica,2026-11-13,raw/employers/2026-11-13/telefonica.jsonl.gz,2bee03b8a61c373cb1d428d76526e7382b37ab2032014e89d0aa8e0f9036c7b5,92,scraped: aggregates only
+employer_smartrecruiters,smartrecruiters:telefonicatech,2026-11-13,raw/employers/2026-11-13/telefonicatech.jsonl.gz,51b61458d599561668e2c8fedaaae58d3a24edfe7115ed4d1a03517b73e1c4c9,50,scraped: aggregates only
+employer_successfactors,successfactors:vodafone,2026-11-13,raw/employers/2026-11-13/vodafone.jsonl.gz,09b917f7c993a9fc2ad52239c05e81f6caf0f1c74ef3a8a0e13aa0ab1c5bd2b4,81,scraped: aggregates only
