@@ -41,7 +41,8 @@ The Magnificent 7, consulting firms, large tech and telcos run their own careers
 
 Things to know:
 
-- **Microsoft rate-limits hard.** It is limited to one call every 10 seconds and 50 listings per term. If it returns HTTP 429 repeatedly, the run skips it; re-run later (finished employers are skipped).
+- **Microsoft rate-limits hard**, especially from GitHub's servers. It is limited to one call every 10 seconds and 50 listings per term. When an employer stops on repeated HTTP 429, what it collected is saved as `<name>.partial.jsonl.gz` with `<name>.progress.json`, and the next run on the same day resumes from the last finished search term. The weekly workflow makes a second pass 15 minutes later; locally, re-run `make employers`.
+- **Some Workday listings have no job link** (seen at Accenture and T-Mobile); they are skipped.
 - **Keyword searches are samples.** Do not compare raw counts between boards and searches; compare shares within a company.
 - **Workday list pages hide locations** ("2 Locations"); the location comes from the posting details.
 - **SuccessFactors RSS** returns about 20 newest matches per search, with no paging, and its keyword match is loose: for Telefónica, "forward deployed" returns network-security and sales roles. Expect few target-family postings from Telefónica and Vodafone; the family patterns, not the search term, decide what counts.

@@ -30,6 +30,17 @@ jobs:
         run: |
           uv run python -m pipeline boards
           uv run python -m pipeline employers
+      - name: Second pass for rate-limited employers (resumes where they stopped)
+        env:
+          AJT_DATA: ${{ github.workspace }}/.snapshots/snapshots
+        run: |
+          if ls "$AJT_DATA"/raw/employers/*/*.progress.json >/dev/null 2>&1; then
+            echo "Some employers stopped early; waiting 15 minutes, then resuming"
+            sleep 900
+            uv run python -m pipeline employers
+          else
+            echo "All employers finished"
+          fi
       - name: Commit the snapshot to the data branch
         working-directory: .snapshots
         run: |
