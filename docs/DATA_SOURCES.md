@@ -61,6 +61,14 @@ The week-1 go/no-go gate. For each prefix in `config.yaml`: count archived posti
 - Scale AI's Lever board has ~50 posting URLs from before December 2022 (P0); all sampled pages were usable.
 - Pass mark (suggested, not agreed): 30 usable postings per family per period.
 
+**Archived postings with text (`make archive`).** The coverage test only checks a sample; `make archive`
+saves title and text for archived postings of the companies in `wayback.collect` (Palantir, Databricks,
+OpenAI, Anthropic, Scale AI), at most 300 per address and period, one earliest snapshot per job. Where the
+URL carries the title (Databricks: `.../partner-solutions-architect-83478800`), only target-family
+postings are fetched. Databricks' own careers site has ~7,500 archived posting URLs from 2020 to 2026,
+which gives a same-company Solutions Architect history next to its new FDE roles. Saved as append-only
+JSON lines in `raw/wayback/`, so an interrupted run keeps everything up to the last line.
+
 Raw snapshots are fetched from `https://web.archive.org/web/<timestamp>id_/<url>` at most once a second and cached in `cache/wayback/` so an interrupted run resumes. Failed downloads are not kept in the cache, so a re-run retries them.
 
 **The Archive refuses connections after heavy use** (seen twice on 2026-11-13). Run the gate once, not repeatedly, and if it stalls, wait an hour and re-run: finished work is cached.

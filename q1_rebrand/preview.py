@@ -13,8 +13,6 @@ earlier periods. Treat the numbers as a first look, not a finding.
 Run: uv run python -m q1_rebrand.preview
 """
 import json
-import re
-from html import unescape
 
 import numpy as np
 import pandas as pd
@@ -24,57 +22,17 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import GroupKFold
 
 from pipeline.boards import job_title, jobs_in, read_snapshot, snapshot_files
-from pipeline.config import CFG, SEED, TODAY, data_dir, run_dir
+from pipeline.config import SEED, TODAY, data_dir, run_dir
 from pipeline.employers import load_employers
 from pipeline.families import company_group, family
+
+# Text helpers (cleaning, masking, English check) are shared with the protocol version.
+from .data import board_text, html_to_text, is_english, mask, subfamily
 
 PER_COMPANY_CAP = 40      # postings per company per class, so Amazon or Databricks can't dominate
 MIN_PER_CLASS = 8         # a company must post at least this many of each class for the within-company test
 N_PERMUTATIONS = 20       # label shuffles for the chance baseline
 
-# --- Text ---------------------------------------------------------------------------------------
-
-def html_to_text(html) -> str:
-    if not isinstance(html, str):                  # None, or NaN from pandas
-        return ""
-    text = unescape(unescape(html))                # Greenhouse content is HTML-escaped twice
-    text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", text)
-    text = re.sub(r"(?s)<[^>]+>", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def board_text(system: str, job: dict) -> str:
-    if system == "greenhouse":
-        return html_to_text(job.get("content"))
-    if system == "lever":
-        lists = " ".join(f"{x.get('text', '')} {html_to_text(x.get('content'))}" for x in job.get("lists") or [])
-        return " ".join([job.get("descriptionPlain") or "", lists, job.get("additionalPlain") or ""])
-    return job.get("descriptionPlain") or html_to_text(job.get("descriptionHtml"))
-
-
-EN = {"the", "and", "you", "with", "our", "to", "of", "will", "for", "your"}
-ES = {"de", "la", "y", "el", "en", "con", "para", "los", "las", "del"}
-
-
-def is_english(text: str) -> bool:
-    words = re.findall(r"[a-záéíóúñ]+", text.lower())
-    en, es = sum(w in EN for w in words), sum(w in ES for w in words)
-    return en >= 20 and en > 2 * es
-
-
-# Title words and company names are masked: the test is about the work described, not the label.
-TITLE_WORDS = re.compile(
-    r"forward[- ]deployed|deployment strateg\w*|solutions?[- ]architect\w*|customer engineer\w*|"
-    r"solutions?[- ]engineer\w*|product manag\w*|\bfdes?\b|\bsas?\b|\bpms?\b|\bces?\b", re.I)
-COMPANY_WORDS = sorted(
-    {n for names in CFG["boards"].values() for n in names} | set(CFG["employers"]) |
-    {"aws", "amazon web services", "google", "scale ai", "glean", "t-mobile", "at&t", "telefónica",
-     "claude", "chatgpt", "gpt", "foundry", "aip", "agentforce", "azure"}, key=len, reverse=True)
-COMPANY_RE = re.compile(r"\b(" + "|".join(re.escape(c) for c in COMPANY_WORDS) + r")\b", re.I)
-
-
-def mask(text: str) -> str:
-    return COMPANY_RE.sub(" ", TITLE_WORDS.sub(" ", text))
 
 
 # --- Data ---------------------------------------------------------------------------------------
@@ -99,14 +57,6 @@ def load_postings(date: str = TODAY) -> pd.DataFrame:
     df = df.drop_duplicates(subset=["company", "masked"])
     return df.reset_index(drop=True)
 
-
-def subfamily(title: str) -> str:
-    t = title.lower()
-    if re.search(r"solutions? architect", t):
-        return "architect"
-    if re.search(r"solutions? engineer|customer engineer", t):
-        return "engineer"
-    return "other"
 
 
 # --- Test ---------------------------------------------------------------------------------------

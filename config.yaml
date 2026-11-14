@@ -102,7 +102,18 @@ wayback:
     scaleai: ['boards.greenhouse.io/scaleai', 'jobs.lever.co/scaleai/']
     google_cloud: ['careers.google.com/jobs/results/']
   snapshots_per_cell: 20           # snapshots checked per prefix x period
-  min_interval: 1.0
+  min_interval: 5.0                # seconds between Archive requests: it allows ~15 a minute and blocks clients above that
+  # Archived postings collected with title and text (make archive), for comparisons over time.
+  # Order = priority: Palantir's old careers site (FDE 2011-16), Databricks (SA history), then the rest.
+  collect:
+    palantir: ['palantir.com/careers', 'jobs.lever.co/palantir/']
+    databricks: ['databricks.com/company/careers', 'boards.greenhouse.io/databricks']
+    openai: ['boards.greenhouse.io/openai', 'jobs.lever.co/openai/', 'jobs.ashbyhq.com/openai']
+    anthropic: ['boards.greenhouse.io/anthropic', 'jobs.lever.co/anthropic/']
+    scaleai: ['boards.greenhouse.io/scaleai', 'jobs.lever.co/scaleai/']
+  collect_periods: [P0, P1]        # 2025 onward comes from the weekly snapshots
+  max_per_cell: 300                # postings per prefix x period when the URL shows the title (only targets fetched)
+  max_per_cell_id_only: 100        # ... when it doesn't: every page must be fetched to read the title
 pass_mark: 30                      # suggested usable postings per family per period (not yet agreed)
 
 kaggle:

@@ -1,0 +1,41 @@
+# Q1 evaluation protocol. Frozen by `make q1-freeze`: `make q1-final` refuses to run if this file changes
+# after freezing. Change settings only before freezing (development set: the snapshots up to the freeze date).
+version: q1-protocol-v1
+
+# Dataset
+min_chars: 500                 # postings shorter than this (after cleaning) are stubs
+english_only: true
+boilerplate: {share: 0.3, min_docs: 10}   # sentence in >30% of a company's postings (per source) is dropped
+near_duplicate_cosine: 0.95    # postings this similar share a cross-validation group (and bootstrap cluster)
+
+# Sampling
+per_company_cap: 40            # postings per company per class
+min_per_class: 8               # within-company tests: a company needs this many of each class
+
+# Model: TF-IDF + logistic regression, C chosen by inner cross-validation
+tfidf: {ngram_min: 1, ngram_max: 2, min_df: 3, sublinear_tf: true}
+c_grid: [0.1, 1.0, 10.0, 100.0]   # 100 added: 10 (the old top) was chosen in almost every fold.
+# 100 is now often chosen too, but accuracy is flat between 10 and 100 (0.818 vs 0.815 on the 2026-11-13
+# development set): sparse text favours weak regularisation by tiny margins, so the grid stops here.
+outer_folds: 5                 # GroupKFold over groups (company, merged with near-duplicates)
+inner_folds: 3
+
+# Uncertainty
+bootstrap: 2000                # cluster bootstrap over groups
+permutations: 200              # label shuffles for the chance baseline
+seeds: 10                      # repeats of the balanced sampling, for robustness
+seed: 42
+
+# Tests: headline plus two anchors on the same protocol
+tests:
+  headline:      {label: family, positive: fde, negative: sa_ce, within_company: true}
+  all_companies: {label: family, positive: fde, negative: sa_ce, within_company: false}
+  near_synonym:  {label: sub, positive: architect, negative: engineer, within_company: true}
+  distinct:      {label: family, positive: pm, negative: sa_ce, within_company: true}
+
+# Pre-registered comparisons (one-sided), Holm-corrected
+comparisons:
+  - [headline, near_synonym, greater]   # FDE is more separable from SA than near-synonym titles are
+  - [headline, distinct, less]          # ... but less separable than SA is from PM
+
+top_terms: {k: 25, min_folds: 4}       # report terms in the top 25 in at least 4 of 5 outer folds
