@@ -1,6 +1,6 @@
 """Command line: `python -m pipeline <step>` (or `make <step>`).
 
-Steps: boards, employers, wayback, hn, kaggle, summary, env, sync-snapshots.
+Steps: boards, employers, wayback, archive, hn, kaggle, summary, env, sync-snapshots.
 """
 import argparse
 import shutil
@@ -57,6 +57,9 @@ def main(argv: list[str] | None = None) -> None:
     emp.add_argument("--only", nargs="*", help="employer names from config.yaml")
     emp.add_argument("--terms", nargs="*", help="override search terms (for testing)")
     sub.add_parser("wayback", help="Wayback coverage test")
+    arc = sub.add_parser("archive", help="archived postings with title and text, for comparisons over time")
+    arc.add_argument("--max-per-cell", type=int, help="postings per prefix and period (default in config.yaml)")
+    arc.add_argument("--only", nargs="*", help="company names from wayback.collect")
     sub.add_parser("hn", help="HN Who is Hiring")
     sub.add_parser("kaggle", help="Kaggle LinkedIn sets")
     sub.add_parser("summary", help="coverage tables and week-1 summary")
@@ -79,6 +82,9 @@ def main(argv: list[str] | None = None) -> None:
         from .wayback import coverage
         result = coverage()
         print(result["estimate"].est_usable.unstack("period", fill_value=0).to_string())
+    elif args.step == "archive":
+        from .wayback_postings import collect
+        collect(max_per_cell=args.max_per_cell, only=args.only)
     elif args.step == "hn":
         from .hn import fetch_hn, monthly_check
         months, missing = monthly_check(fetch_hn())

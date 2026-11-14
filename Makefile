@@ -1,6 +1,6 @@
 PY := uv run python -m pipeline
 
-.PHONY: setup analysis-deps test lint week1 boards employers wayback hn kaggle summary notebook snapshots
+.PHONY: setup analysis-deps test lint week1 boards employers wayback archive hn kaggle summary notebook snapshots q1 q1-freeze q1-final q1-over-time
 
 setup:            ## install Python 3.11 + pinned deps, git hooks, and a .env to fill in
 	uv sync
@@ -28,6 +28,9 @@ employers:        ## big employers by keyword search (~1 hour, mostly Microsoft)
 wayback:          ## Wayback coverage test: the go/no-go gate (~30-60 min)
 	$(PY) wayback
 
+archive:          ## archived postings (title + text) for comparisons over time (~1-2 hours)
+	$(PY) archive
+
 hn:               ## HN Who is Hiring (BigQuery, or Hugging Face fallback)
 	$(PY) hn
 
@@ -45,3 +48,16 @@ snapshots:        ## fetch the weekly snapshots (data branch) and copy new files
 	@test -d .snapshots || git worktree add -q --detach .snapshots origin/data
 	git -C .snapshots checkout -q --detach origin/data
 	$(PY) sync-snapshots
+
+# --- Q1: is FDE a new role or a renamed Solutions Architect? (protocol in q1_rebrand/protocol.yaml) ---
+q1:               ## development-set results (exploratory): all snapshots up to the freeze
+	uv run python -m q1_rebrand.run
+
+q1-freeze:        ## freeze the protocol: commit first; afterwards protocol.yaml must not change
+	uv run python -m q1_rebrand.freeze
+
+q1-final:         ## held-out results on postings first seen after the freeze
+	uv run python -m q1_rebrand.final
+
+q1-over-time:     ## FDE vs SA by period, using archived postings (run `make archive` first)
+	uv run python -m q1_rebrand.over_time
