@@ -118,6 +118,9 @@ def _done(prefix: str) -> set[str]:
 
 def collect(max_per_cell: int | None = None, only: list[str] | None = None, max_failures: int = 10) -> None:
     cfg = CFG["wayback"]
+    max_id_only = cfg.get("max_per_cell_id_only")
+    if max_per_cell and max_id_only:               # an explicit small run caps id-only sources too
+        max_id_only = min(max_id_only, max_per_cell)
     max_per_cell = max_per_cell or cfg["max_per_cell"]
     rng = random.Random(SEED)
     failures = 0
@@ -127,7 +130,7 @@ def collect(max_per_cell: int | None = None, only: list[str] | None = None, max_
         for prefix in prefixes:
             try:
                 todo = candidates(company, prefix, max_per_cell, rng, cfg.get("collect_periods"),
-                                  cfg.get("max_per_cell_id_only"))
+                                  max_id_only)
             except Exception as exc:
                 print(f"SKIPPED {prefix}: {exc}")
                 continue
