@@ -34,6 +34,30 @@ different roles (SA vs product manager, expected near perfect).
    headline < distinct-roles anchor.
 7. **Terms:** words in the top 25 in at least 4 of the 5 outer folds.
 
+## Development-set results (exploratory, snapshot 2026-11-13)
+
+These numbers come from the data used to set up the method, so they are not the result to quote. The
+held-out number from `make q1-final` replaces them once the post-freeze pulls are in.
+
+| Test | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
+| --- | --- | --- | --- | --- | --- |
+| FDE vs SA, same companies (headline) | 314 | 6 | 0.815 | 0.68–0.89 | 0.54 |
+| FDE vs SA, all companies | 570 | 20 | 0.863 | 0.81–0.93 | 0.54 |
+| SA "architect" vs "engineer" (near-synonym anchor) | 106 | 3 | 0.575 | 0.53–0.66 | 0.57 |
+| SA vs product manager (distinct anchor) | 256 | 6 | 0.977 | 0.94–1.00 | 0.55 |
+
+Headline companies: Amazon, Capgemini, Databricks, Salesforce, ServiceNow, Snowflake.
+
+- **Headline > near-synonym anchor:** +0.24 (95% CI 0.09–0.34), Holm p = 0.001.
+- **Headline < distinct anchor:** −0.16 (95% CI −0.30 to −0.07), Holm p = 0.001.
+- **Across 10 sampling seeds** the headline averages 0.852 (sd 0.029).
+- **Stable terms towards FDE:** production, delivery, AI solutions, scope, deployment, environments,
+  engagements. **Towards SA:** pre-sales, sales, account, architectural, data analytics, workshops.
+
+Reading: FDE sits between the anchors. It is a related but distinct role, centred on delivery into
+production, rather than a renamed pre-sales SA. The near-synonym anchor has only 3 companies, so its
+interval is wide.
+
 ## Held-out design
 
 The development set is every snapshot up to the freeze date. The held-out set is postings first seen in
