@@ -36,42 +36,57 @@ reading that FDE is a renamed consultant rather than a renamed SA.
    headline < distinct-roles anchor, consultant > near-synonym anchor, and consultant < headline.
 7. **Terms:** words in the top 25 in at least 4 of the 5 outer folds.
 
-## Development-set results (exploratory, protocol v2, snapshot 2026-11-13)
+## Development-set results (exploratory, protocol v3, snapshot 2026-11-13)
 
 These numbers come from the data used to set up the method, so they are not the result to quote. The
 held-out number from `make q1-final` replaces them once the post-freeze pulls are in.
 
 | Test | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
 | --- | --- | --- | --- | --- | --- |
-| FDE vs SA, same companies (headline) | 314 | 6 | 0.854 | 0.72–0.93 | 0.54 |
-| FDE vs SA, all companies | 572 | 21 | 0.872 | 0.81–0.93 | 0.54 |
+| FDE vs SA, same companies (headline) | 286 | 5 | 0.818 | 0.63–0.94 | 0.55 |
+| FDE vs SA, all companies | 542 | 21 | 0.865 | 0.80–0.93 | 0.54 |
 | SA "architect" vs "engineer" (near-synonym anchor) | 128 | 4 | 0.523 | 0.46–0.61 | 0.58 |
 | SA vs product manager (distinct anchor) | 276 | 7 | 0.946 | 0.85–0.99 | 0.54 |
-| FDE vs technical consultant | 140 | 2 | 0.543 | 0.50–0.60 | 0.56 |
+| FDE vs technical consultant | 140 | 2 | 0.521 | 0.50–0.55 | 0.56 |
+
+Headline companies: Amazon, Capgemini, Databricks, Salesforce, Snowflake (ServiceNow dropped below 8 FDE
+postings once its non-technical "forward deployed" titles were excluded).
 
 Pre-registered comparisons (one-sided, Holm-corrected over the four):
 
-- **Headline > near-synonym:** +0.33 (95% CI 0.18–0.43), Holm p = 0.002.
-- **Headline < distinct:** −0.09 (95% CI −0.24 to 0.03), Holm p = 0.12, not significant.
-- **Consultant > near-synonym:** +0.02 (95% CI −0.08 to 0.12), Holm p = 0.34, not significant.
-- **Consultant < headline:** −0.31 (95% CI −0.41 to −0.16), Holm p = 0.002.
-- **Across 10 sampling seeds** the headline averages 0.848 (sd 0.030).
-- **Stable terms towards FDE:** production, delivery, AI solutions, ps (professional services), environments,
-  execution, deploy, agent, design build, scope. **Towards SA:** pre-sales, sales, architectural, workshops,
-  account, presentations, cloud.
+- **Headline > near-synonym:** +0.30 (95% CI 0.09–0.43), Holm p = 0.002.
+- **Headline < distinct:** −0.13 (95% CI −0.32 to 0.02), Holm p = 0.08, not significant.
+- **Consultant > near-synonym:** −0.00 (95% CI −0.09 to 0.07), Holm p = 0.52, not significant.
+- **Consultant < headline:** −0.30 (95% CI −0.42 to −0.11), Holm p = 0.002.
+- **Across 10 sampling seeds** the headline averages 0.837 (sd 0.039).
+- **Stable terms towards FDE:** engineers, production, delivery, ps (professional services), execution, deploy,
+  environments, alongside, directly, design build. **Towards SA:** SAP, sales, pre-sales, market, mobile,
+  design implementation, digital, data analytics.
 
 Reading: FDE is clearly not a renamed pre-sales SA, and its vocabulary is post-sales delivery. On this
 development set FDE could not be told apart from technical consultants, **but that test rests on only two
 companies (Amazon, Databricks)**: with two companies the cross-validation trains on one and tests on the other,
-so near-chance accuracy may mean the FDE-consultant difference does not transfer between those two companies
-rather than that the roles are the same. The held-out run adds companies (Cloudflare, MongoDB, GitLab and
-others from the 2026-11-15 boards), so it is the real test of the consultant reading.
+and the model learned nothing that transferred (every posting scored about 50/50). It is a non-result, not
+evidence that the roles are the same. The held-out run adds companies, so it is the real test.
+
+**Which FDE postings read like SA (exploratory, v2 labels).** In the all-companies test 13% of FDE postings
+scored below 0.4. Capgemini supplied 16 of those 37 (80% of its FDE postings); elsewhere the share was about
+8%, and almost none at OpenAI, Anthropic, Scale AI or Cohere. At Capgemini and Salesforce the FDE postings are
+closer to the same company's SA postings (centroid cosine 0.79) than to FDE postings elsewhere (0.34–0.39).
+Part of Capgemini's result is leftover "About Capgemini" text: it uses at least eight versions of that
+paragraph, each under the 30% boilerplate threshold, so none is removed. A sensitivity run with a 5% threshold
+lowered Capgemini's SA-like share to 35–45% and moved the headline from 0.854 to 0.895. The frozen threshold
+was not changed after seeing this; the held-out report should include the same sensitivity run.
 
 **Protocol history.** v1 was frozen on 2026-11-14 and superseded by v2 on 2026-11-15, before any post-freeze
 snapshot existed. v2 added the consultant comparison and fixed labels and masking: delivery/resident SAs
 moved from SA to technical consultant, sales engineers joined SA, agent/AI deployment engineers joined FDE,
 and hardware forward-deployed roles were excluded. v1's development results (headline 0.815, distinct
-0.977, near-synonym 0.575) and freeze record are in [frozen/superseded/v1](frozen/superseded/v1).
+0.977, near-synonym 0.575) and freeze record are in [frozen/superseded/v1](frozen/superseded/v1). v3 replaced
+v2 the same day, also before any post-freeze snapshot: non-technical "forward deployed" titles (accountant,
+banker, recruiter, PM, consultant and similar) stopped counting as FDE and became their own family,
+`fd_nontech`, left out of every test. v2's results (headline 0.854, consultant 0.543) and record are in
+[frozen/superseded/v2](frozen/superseded/v2).
 
 ## Held-out design
 
