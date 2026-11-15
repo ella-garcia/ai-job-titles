@@ -23,3 +23,4 @@ employer_workday,workday:att,2026-11-13,raw/employers/2026-11-13/att.jsonl.gz,80
 employer_successfactors,successfactors:telefonica,2026-11-13,raw/employers/2026-11-13/telefonica.jsonl.gz,2bee03b8a61c373cb1d428d76526e7382b37ab2032014e89d0aa8e0f9036c7b5,92,scraped: aggregates only
 employer_smartrecruiters,smartrecruiters:telefonicatech,2026-11-13,raw/employers/2026-11-13/telefonicatech.jsonl.gz,51b61458d599561668e2c8fedaaae58d3a24edfe7115ed4d1a03517b73e1c4c9,50,scraped: aggregates only
 employer_successfactors,successfactors:vodafone,2026-11-13,raw/employers/2026-11-13/vodafone.jsonl.gz,09b917f7c993a9fc2ad52239c05e81f6caf0f1c74ef3a8a0e13aa0ab1c5bd2b4,81,scraped: aggregates only
+hn_huggingface,hf://datasets/brusic/hacker-news-who-is-hiring-posts,2026-11-13,raw/hn/2026-11-13/comments.parquet,beb962d6fd42f2198a79583aee0341ff9290459f93a2886ae39c7b7e42801090,94117,see dataset card
