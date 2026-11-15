@@ -86,13 +86,23 @@ def test_protocol_v2_labels(title, expected):
     ("Forward Deployed Accountant", "fd_nontech"),
     ("Forward Deployed Banker, EMEA", "fd_nontech"),
     ("Forward Deployed Recruiter", "fd_nontech"),
+    ("Forward Deployed Finance Engineer, Buyout", "fd_nontech"),
     ("Senior Communications Manager, Forward Deployed Engineering", "fd_nontech"),
-    ("Forward Deployed Product Manager, Enterprise", "fd_nontech"),
-    ("Forward Deployed Process Consultant", "fd_nontech"),
+    ("Forward Deployed Product Manager, Enterprise", "fd_hybrid"),
+    ("Forward Deployed Process Consultant", "fd_hybrid"),
+    ("Forward Deployed Enablement Engineer - Customer Success", "fd_hybrid"),
+    ("Technical Program Manager, Forward Deployed Engineering", "fd_hybrid"),
+    ("Sr Product Manager, Technical, AWS Forward Deployed Engineering (FDE)", "fd_hybrid"),
+    ("Senior Engagement Manager, Forward Deployed Engineering", "fd_hybrid"),
+    ("Forward Deployed Manager - ED&A", "fd_hybrid"),
     ("Forward Deployed Engineer", "fde"),
+    ("Forward Deployed Engineer (FDE), Legal-NYC", "fde"),
+    ("Sr. Forward Deployed Engineer (FDE) - Communications, Media, Entertainment & Games", "fde"),
+    ("Capgemini Invent, Consultant, Forward Deployed Engineer", "fde"),
     ("Manager, Forward Deployed Engineering", "fde"),
     ("Forward Deployed Research Scientist", "fde"),
     ("Deployment Strategist", "fde"),
+    ("Forward Deployed Build Engineer", "other"),
 ])
-def test_protocol_v3_nontechnical_forward_deployed(title, expected):
+def test_protocol_v4_forward_deployed_roles(title, expected):
     assert family(title) == expected

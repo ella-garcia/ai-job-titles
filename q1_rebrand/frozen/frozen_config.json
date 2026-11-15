@@ -1,7 +1,7 @@
 {
-  "protocol": "q1-protocol-v3",
-  "protocol_hash": "7320ca6b24d4c6900dbda44a247c31ff41567b7a22726391b70547e2f55d7b1d",
-  "git_commit": "55ba4ad6653c750772b2ecb9ea76c7ffb8f27d2e",
+  "protocol": "q1-protocol-v4",
+  "protocol_hash": "bdf42a1f5f4e4f343ea706cf9ef163f59b1f3221725af1abac6fbfc91f244086",
+  "git_commit": "9f6c5197533df71a07d134d34661cbfd45783ff4",
   "frozen_at": "2026-11-13",
   "frozen_on": "2026-11-15",
   "dev_snapshots": [
