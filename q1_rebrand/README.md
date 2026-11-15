@@ -49,3 +49,31 @@ job). Re-running `make q1-final` with more snapshots (`--rerun`) keeps earlier r
 
 Archived postings come from a few companies per period, so check the `companies` column before reading a
 trend: a period can reflect who was archived as much as how the role changed.
+
+### First results (exploratory, full archive collected 2026-11-14)
+
+1,585 archived postings (Palantir, Databricks, OpenAI, Anthropic, Scale AI) against 7,706 current ones.
+Only about 300 archived postings are FDE or SA, almost all from Palantir (FDE) and Databricks (SA).
+
+**Same company, then vs now** (mean P(FDE); current postings scored out of fold):
+
+| Company, role | P0 (to Nov 2022) | P1 (Nov 2022–2024) | Today |
+| --- | --- | --- | --- |
+| Palantir FDE | 0.48 (n=74) | 0.52 (n=27) | 0.61 (n=80) |
+| Databricks SA | 0.06 (n=15) | 0.07 (n=173) | 0.10 (n=183) |
+| Scale AI FDE | 0.49 (n=2) | 0.46 (n=3) | 0.73 (n=13) |
+
+Current FDE postings across all 18 companies average 0.72 (95% CI 0.62–0.82); current SA, 0.13.
+
+- **FDE moved gradually away from SA; SA stayed put.** Palantir's FDE postings were already distinct from
+  SA before ChatGPT and have drifted further towards today's FDE profile. The SA control barely moved.
+- **Newer adopters write the role up more distinctly** than Palantir ever did (0.72 vs 0.61).
+
+**Do not read into the centroid distance.** FDE–SA cosine rises from about 0.2 (P0, P1) to 0.71 today
+(bootstrap median), but that is mostly company mix: archived FDE is Palantir and archived SA is Databricks,
+while today both roles come from the same companies with shared wording.
+
+**Limits.** The archive cannot test whether FDE absorbed SA work: no company posted both roles before 2025
+in the archive. Archived pages are scored by the full model while current postings use out-of-fold
+scores, and archived text comes from scraped pages rather than board APIs, so the then-vs-now gap is
+approximate.
