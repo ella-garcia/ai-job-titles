@@ -1,6 +1,11 @@
-# Q1 evaluation protocol. Frozen by `make q1-freeze`: `make q1-final` refuses to run if this file changes
-# after freezing. Change settings only before freezing (development set: the snapshots up to the freeze date).
-version: q1-protocol-v1
+# Q1 evaluation protocol. Frozen by `make q1-freeze`: `make q1-final` refuses to run if this file, the family
+# labels in config.yaml or the masking in data.py change after freezing. Change settings only before freezing
+# (development set: the snapshots up to the freeze date).
+#
+# v2 (2026-11-15) replaces v1 (frozen 2026-11-14) before any held-out data was collected. It adds the
+# technical-consultant comparison (the rival reading: FDE = renamed post-sales consultant), fixes FDE and SA
+# title labels, and fixes masking of new company names. v1's record is kept in frozen/superseded/v1/.
+version: q1-protocol-v2
 
 # Dataset
 min_chars: 500                 # postings shorter than this (after cleaning) are stubs
@@ -32,10 +37,13 @@ tests:
   all_companies: {label: family, positive: fde, negative: sa_ce, within_company: false}
   near_synonym:  {label: sub, positive: architect, negative: engineer, within_company: true}
   distinct:      {label: family, positive: pm, negative: sa_ce, within_company: true}
+  consultant:    {label: family, positive: fde, negative: tech_consultant, within_company: true}
 
 # Pre-registered comparisons (one-sided), Holm-corrected
 comparisons:
   - [headline, near_synonym, greater]   # FDE is more separable from SA than near-synonym titles are
   - [headline, distinct, less]          # ... but less separable than SA is from PM
+  - [consultant, near_synonym, greater] # FDE is not a renamed technical consultant either
+  - [consultant, headline, less]        # ... but FDE is closer to post-sales consultants than to SA
 
 top_terms: {k: 25, min_folds: 4}       # report terms in the top 25 in at least 4 of 5 outer folds

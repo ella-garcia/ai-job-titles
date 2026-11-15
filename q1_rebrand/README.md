@@ -3,7 +3,9 @@
 **Test:** hide the job title and company, and ask whether a classifier can tell FDE postings from Solutions
 Architect / Customer Engineer (SA) postings from the work described. Read the result against two anchors
 run the same way: near-synonym titles (SA "architect" vs "engineer", expected near chance) and clearly
-different roles (SA vs product manager, expected near perfect).
+different roles (SA vs product manager, expected near perfect). Since protocol v2 the same test is also run
+against post-sales technical consultants (professional services, implementation, delivery SAs): the rival
+reading that FDE is a renamed consultant rather than a renamed SA.
 
 ## Steps
 
@@ -30,33 +32,46 @@ different roles (SA vs product manager, expected near perfect).
    one group, so every test company is unseen in training. The vectorizer is fitted inside each split.
 5. **Uncertainty:** 95% interval from 2,000 bootstrap resamples of whole groups; chance level from 200
    label shuffles; the headline repeated with 10 sampling seeds.
-6. **Comparisons (pre-registered, one-sided, Holm-corrected):** headline > near-synonym anchor, and
-   headline < distinct-roles anchor.
+6. **Comparisons (pre-registered, one-sided, Holm-corrected):** headline > near-synonym anchor,
+   headline < distinct-roles anchor, consultant > near-synonym anchor, and consultant < headline.
 7. **Terms:** words in the top 25 in at least 4 of the 5 outer folds.
 
-## Development-set results (exploratory, snapshot 2026-11-13)
+## Development-set results (exploratory, protocol v2, snapshot 2026-11-13)
 
 These numbers come from the data used to set up the method, so they are not the result to quote. The
 held-out number from `make q1-final` replaces them once the post-freeze pulls are in.
 
 | Test | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
 | --- | --- | --- | --- | --- | --- |
-| FDE vs SA, same companies (headline) | 314 | 6 | 0.815 | 0.68–0.89 | 0.54 |
-| FDE vs SA, all companies | 570 | 20 | 0.863 | 0.81–0.93 | 0.54 |
-| SA "architect" vs "engineer" (near-synonym anchor) | 106 | 3 | 0.575 | 0.53–0.66 | 0.57 |
-| SA vs product manager (distinct anchor) | 256 | 6 | 0.977 | 0.94–1.00 | 0.55 |
+| FDE vs SA, same companies (headline) | 314 | 6 | 0.854 | 0.72–0.93 | 0.54 |
+| FDE vs SA, all companies | 572 | 21 | 0.872 | 0.81–0.93 | 0.54 |
+| SA "architect" vs "engineer" (near-synonym anchor) | 128 | 4 | 0.523 | 0.46–0.61 | 0.58 |
+| SA vs product manager (distinct anchor) | 276 | 7 | 0.946 | 0.85–0.99 | 0.54 |
+| FDE vs technical consultant | 140 | 2 | 0.543 | 0.50–0.60 | 0.56 |
 
-Headline companies: Amazon, Capgemini, Databricks, Salesforce, ServiceNow, Snowflake.
+Pre-registered comparisons (one-sided, Holm-corrected over the four):
 
-- **Headline > near-synonym anchor:** +0.24 (95% CI 0.09–0.34), Holm p = 0.001.
-- **Headline < distinct anchor:** −0.16 (95% CI −0.30 to −0.07), Holm p = 0.001.
-- **Across 10 sampling seeds** the headline averages 0.852 (sd 0.029).
-- **Stable terms towards FDE:** production, delivery, AI solutions, scope, deployment, environments,
-  engagements. **Towards SA:** pre-sales, sales, account, architectural, data analytics, workshops.
+- **Headline > near-synonym:** +0.33 (95% CI 0.18–0.43), Holm p = 0.002.
+- **Headline < distinct:** −0.09 (95% CI −0.24 to 0.03), Holm p = 0.12, not significant.
+- **Consultant > near-synonym:** +0.02 (95% CI −0.08 to 0.12), Holm p = 0.34, not significant.
+- **Consultant < headline:** −0.31 (95% CI −0.41 to −0.16), Holm p = 0.002.
+- **Across 10 sampling seeds** the headline averages 0.848 (sd 0.030).
+- **Stable terms towards FDE:** production, delivery, AI solutions, ps (professional services), environments,
+  execution, deploy, agent, design build, scope. **Towards SA:** pre-sales, sales, architectural, workshops,
+  account, presentations, cloud.
 
-Reading: FDE sits between the anchors. It is a related but distinct role, centred on delivery into
-production, rather than a renamed pre-sales SA. The near-synonym anchor has only 3 companies, so its
-interval is wide.
+Reading: FDE is clearly not a renamed pre-sales SA, and its vocabulary is post-sales delivery. On this
+development set FDE could not be told apart from technical consultants, **but that test rests on only two
+companies (Amazon, Databricks)**: with two companies the cross-validation trains on one and tests on the other,
+so near-chance accuracy may mean the FDE-consultant difference does not transfer between those two companies
+rather than that the roles are the same. The held-out run adds companies (Cloudflare, MongoDB, GitLab and
+others from the 2026-11-15 boards), so it is the real test of the consultant reading.
+
+**Protocol history.** v1 was frozen on 2026-11-14 and superseded by v2 on 2026-11-15, before any post-freeze
+snapshot existed. v2 added the consultant comparison and fixed labels and masking: delivery/resident SAs
+moved from SA to technical consultant, sales engineers joined SA, agent/AI deployment engineers joined FDE,
+and hardware forward-deployed roles were excluded. v1's development results (headline 0.815, distinct
+0.977, near-synonym 0.575) and freeze record are in [frozen/superseded/v1](frozen/superseded/v1).
 
 ## Held-out design
 

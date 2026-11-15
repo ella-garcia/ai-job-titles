@@ -52,14 +52,29 @@ def is_english(text: str) -> bool:
 
 # Title words and company names are masked: the test is about the work described, not the label.
 TITLE_WORDS = re.compile(
-    r"forward[- ]deployed|deployment strateg\w*|solutions?[- ]architect\w*|customer engineer\w*|"
-    r"solutions?[- ]engineer\w*|product manag\w*|\bfdes?\b|\bsas?\b|\bpms?\b|\bces?\b", re.I)
+    r"forward[- ]deployed|deployment strateg\w*|(agent |ai )?deploy(ment|ed) engineer\w*|"
+    r"(delivery |resident )?solutions?[- ]architect\w*|customer engineer\w*|"
+    r"solutions?[- ]engineer\w*|sales engineer\w*|technical consultant\w*|consultant\w*|consultor\w*|"
+    r"professional services|implementation (engineer|consultant|specialist)\w*|"
+    r"product manag\w*|\bfdes?\b|\bsas?\b|\bpms?\b|\bces?\b|\bproserve\b", re.I)
+# Board slugs that are ordinary words are not masked (they would remove vocabulary); their companies are
+# masked by the brand names listed below instead.
+COMMON_WORD_SLUGS = {"applied", "writer", "modal", "socket", "zip", "notion", "cursor", "ramp", "handshake",
+                     "cognition", "sentry", "turing"}
 COMPANY_WORDS = sorted(
-    {n for names in CFG["boards"].values() for n in names} | set(CFG["employers"]) |
-    set(CFG["wayback"].get("collect", {})) |
+    ({n for names in CFG["boards"].values() for n in names} | set(CFG["employers"]) |
+     set(CFG["wayback"].get("collect", {}))) - COMMON_WORD_SLUGS |
     {"aws", "amazon web services", "google", "scale ai", "glean", "t-mobile", "at&t", "telefónica",
-     "palantir technologies", "claude", "chatgpt", "gpt", "foundry", "gotham", "aip", "agentforce", "azure"},
-    key=len, reverse=True)
+     "palantir technologies", "claude", "chatgpt", "gpt", "foundry", "gotham", "aip", "agentforce", "azure",
+     "anduril", "c3 ai", "c3.ai", "c3 iot", "together ai", "invisible technologies", "snorkel", "vannevar",
+     "domino data lab", "domino", "mistral", "mistral ai", "le chat", "hebbia", "clay", "elevenlabs", "eleven labs",
+     "applied intuition", "cognition labs", "devin", "windsurf", "anysphere", "sentry.io", "zip hq", "notion ai",
+     "replit agent", "memsql", "single store", "langgraph", "langsmith", "deepgram", "legora", "coreweave",
+     "mongodb atlas", "datadog", "gitlab", "vercel", "next.js", "figma", "stripe", "privy", "rogo", "decagon",
+     "parloa", "saronic", "workhelix", "outreach.io", "amplitude", "intercom", "cresta", "labelbox",
+     "cloudflare", "ramp.com", "writer.com", "modal labs", "socket.dev", "handshake ai", "turing.com",
+     "braze", "tines"},
+    key=lambda w: (-len(w), w))                    # deterministic order (the protocol hash uses it)
 COMPANY_RE = re.compile(r"\b(" + "|".join(re.escape(c) for c in COMPANY_WORDS) + r")\b", re.I)
 
 
@@ -71,7 +86,7 @@ def subfamily(title: str) -> str:
     t = (title or "").lower()
     if re.search(r"solutions? architect", t):
         return "architect"
-    if re.search(r"solutions? engineer|customer engineer", t):
+    if re.search(r"solutions? engineer|customer engineer|sales engineer", t):
         return "engineer"
     return "other"
 
@@ -122,7 +137,7 @@ def prepare(df: pd.DataFrame, protocol: dict) -> pd.DataFrame:
         return df.assign(family=[], sub=[], group=[], masked=[], key=[])
     df = df.reset_index(drop=True).copy()
     df["family"] = df.title.map(family)
-    df["sub"] = df.title.map(subfamily)
+    df["sub"] = df.title.map(subfamily).where(df.family == "sa_ce", "other")   # SA family only
     df["group"] = df.company.map(company_group)
     bp = protocol["boilerplate"]
     df["clean"] = remove_boilerplate(df, "text", ("company", "source"), bp["share"], bp["min_docs"])

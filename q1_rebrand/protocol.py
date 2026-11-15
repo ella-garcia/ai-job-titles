@@ -23,8 +23,19 @@ def load() -> dict:
     return yaml.safe_load(PROTOCOL.read_text())
 
 
+def labelling() -> dict:
+    """The parts of config.yaml and data.py that decide labels and masking: frozen with the protocol."""
+    from pipeline.config import CFG
+
+    from .data import COMPANY_WORDS, TITLE_WORDS
+    return {"families": CFG["families"], "exclude_titles": CFG.get("exclude_titles"),
+            "title_words": TITLE_WORDS.pattern, "company_words": COMPANY_WORDS}
+
+
 def protocol_hash() -> str:
-    return hashlib.sha256(PROTOCOL.read_bytes()).hexdigest()
+    """Hash of protocol.yaml plus the labelling rules (v2: a label change also invalidates the freeze)."""
+    extra = json.dumps(labelling(), sort_keys=True).encode()
+    return hashlib.sha256(PROTOCOL.read_bytes() + b"\n" + extra).hexdigest()
 
 
 def git(*args: str) -> str:

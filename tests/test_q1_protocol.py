@@ -79,3 +79,26 @@ def test_over_time_interval_needs_two_companies():
     assert cluster_mean_ci(np.array([0.2, 0.4]), np.array(["a", "a"]), 100, rng) is None
     ci = cluster_mean_ci(np.array([0.2, 0.4, 0.6, 0.8]), np.array(["a", "a", "b", "b"]), 500, rng)
     assert ci[0] <= 0.5 <= ci[1]
+
+
+def test_protocol_hash_covers_labelling(monkeypatch):
+    from pipeline.config import CFG
+    before = P.protocol_hash()
+    monkeypatch.setitem(CFG, "families", {**CFG["families"], "fde": "forward deployed"})
+    assert P.protocol_hash() != before
+
+
+def test_common_word_slugs_are_not_masked():
+    from q1_rebrand.data import mask
+    out = mask("Ramp up fast and apply a notion of rigor with Anduril and our Technical Consultants.")
+    assert "Ramp up" in out and "notion" in out
+    assert "Anduril" not in out and "Consultant" not in out
+
+
+def test_protocol_hash_is_stable_across_processes():
+    import subprocess
+    import sys
+    cmd = [sys.executable, "-c", "from q1_rebrand import protocol as P; print(P.protocol_hash())"]
+    hashes = {subprocess.run(cmd, capture_output=True, text=True, cwd=P.ROOT,
+                             env={**__import__("os").environ, "PYTHONHASHSEED": str(s)}).stdout for s in (1, 2, 3)}
+    assert len(hashes) == 1

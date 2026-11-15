@@ -65,3 +65,18 @@ def test_company_group():
     assert company_group("anthropic") == "ai_native"
     assert company_group("a16z") == "vc_accelerator"
     assert company_group("unknown-co") == "other"
+
+
+@pytest.mark.parametrize("title, expected", [
+    ("Forward Deployed Engineer, Professional Services", "fde"),
+    ("Agent Deployment Engineer - Spanish Speaking", "fde"),
+    ("Deployed Engineer (Atlanta)", "fde"),
+    ("Delivery Solutions Architect - Financial Services", "tech_consultant"),
+    ("Technical Consultant", "tech_consultant"),
+    ("Implementation Engineer", "tech_consultant"),
+    ("Enterprise Sales Engineer", "sa_ce"),
+    ("Mechanical Engineer - Forward Deployed", "other"),
+    ("Forward Deployed Build Engineer", "other"),
+])
+def test_protocol_v2_labels(title, expected):
+    assert family(title) == expected
