@@ -111,30 +111,39 @@ job). Re-running `make q1-final` with more snapshots (`--rerun`) keeps earlier r
 Archived postings come from a few companies per period, so check the `companies` column before reading a
 trend: a period can reflect who was archived as much as how the role changed.
 
-### First results (exploratory, full archive collected 2026-11-14)
+### Results (exploratory, protocol v4 labels, archive collected 2026-11-14/15)
 
-1,585 archived postings (Palantir, Databricks, OpenAI, Anthropic, Scale AI) against 7,706 current ones.
-Only about 300 archived postings are FDE or SA, almost all from Palantir (FDE) and Databricks (SA).
+2,558 archived postings from 12 companies (Palantir, Databricks, OpenAI, Anthropic, Scale AI, C3.ai,
+SingleStore, Cloudflare, Anduril, Braze, Baseten, Clay) against 7,706 current ones. Only 330 archived postings
+are FDE or SA. The archived pages are kept on the `data` branch (`snapshots/raw/wayback/`).
 
 **Same company, then vs now** (mean P(FDE); current postings scored out of fold):
 
 | Company, role | P0 (to Nov 2022) | P1 (Nov 2022–2024) | Today |
 | --- | --- | --- | --- |
-| Palantir FDE | 0.48 (n=74) | 0.52 (n=27) | 0.61 (n=80) |
-| Databricks SA | 0.06 (n=15) | 0.07 (n=173) | 0.10 (n=183) |
-| Scale AI FDE | 0.49 (n=2) | 0.46 (n=3) | 0.73 (n=13) |
+| C3.ai FDE | 0.21 (n=4) | 0.11 (n=1) | — |
+| C3.ai SA | 0.08 (n=6) | 0.11 (n=11) | — |
+| Palantir FDE | 0.39 (n=73) | 0.40 (n=27) | 0.51 (n=78) |
+| Databricks SA | 0.08 (n=14) | 0.04 (n=140) | 0.07 (n=153) |
+| Scale AI FDE | 0.46 (n=2) | 0.43 (n=3) | 0.67 (n=11) |
 
-Current FDE postings across all 18 companies average 0.72 (95% CI 0.62–0.82); current SA, 0.13.
+All archived FDE postings average 0.39 in P0 (95% CI 0.25–0.50) and in P1; current FDE postings across 17
+companies average 0.67 (0.55–0.78). Archived SA postings average 0.09 (P0) and 0.05 (P1); current SA, 0.10.
 
-- **FDE moved gradually away from SA; SA stayed put.** Palantir's FDE postings were already distinct from
-  SA before ChatGPT and have drifted further towards today's FDE profile. The SA control barely moved.
-- **Newer adopters write the role up more distinctly** than Palantir ever did (0.72 vs 0.61).
+- **FDE moved away from SA; SA stayed put.** Palantir's FDE postings drifted towards today's FDE profile, and
+  the SA control barely moved.
+- **C3.ai is the only company with both roles in the archive before ChatGPT.** Its early FDE postings read
+  almost like its SA postings (0.21 vs 0.08, then both 0.11), several of them titled "Forward Deployed
+  Solution Engineer / Sales Engineer". This fits FDE content changing rather than only the name, but it rests
+  on five FDE postings: a lead, not a finding. C3.ai has no current board in the data, so there is no "today".
+- **Newer adopters write the role up more distinctly** than Palantir (0.67 vs 0.51).
 
-**Do not read into the centroid distance.** FDE–SA cosine rises from about 0.2 (P0, P1) to 0.71 today
-(bootstrap median), but that is mostly company mix: archived FDE is Palantir and archived SA is Databricks,
-while today both roles come from the same companies with shared wording.
+**Do not read into the centroid distance.** FDE–SA cosine rises from about 0.3 (P0, P1) to 0.71 today
+(bootstrap median), mostly because of company mix: archived FDE is mainly Palantir and archived SA mainly
+Databricks, while today both roles come from the same companies with shared wording.
 
-**Limits.** The archive cannot test whether FDE absorbed SA work: no company posted both roles before 2025
-in the archive. Archived pages are scored by the full model while current postings use out-of-fold
-scores, and archived text comes from scraped pages rather than board APIs, so the then-vs-now gap is
-approximate.
+**Limits.** Anduril's archived URLs carry only an ID, so its 200 pages were sampled without seeing titles and
+none was an FDE posting; Braze had none either, and Baseten's three were dropped by the corpus filters. 27 pages failed
+to download (Archive refusals) and will be retried. Archived pages are scored by the full model while current
+postings use out-of-fold scores, and archived text comes from scraped pages rather than board APIs, so the
+then-vs-now gap is approximate. Earlier numbers (v1 labels, five companies) put Palantir at 0.48 / 0.52 / 0.61.
