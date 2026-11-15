@@ -93,3 +93,12 @@ def test_common_word_slugs_are_not_masked():
     out = mask("Ramp up fast and apply a notion of rigor with Anduril and our Technical Consultants.")
     assert "Ramp up" in out and "notion" in out
     assert "Anduril" not in out and "Consultant" not in out
+
+
+def test_protocol_hash_is_stable_across_processes():
+    import subprocess
+    import sys
+    cmd = [sys.executable, "-c", "from q1_rebrand import protocol as P; print(P.protocol_hash())"]
+    hashes = {subprocess.run(cmd, capture_output=True, text=True, cwd=P.ROOT,
+                             env={**__import__("os").environ, "PYTHONHASHSEED": str(s)}).stdout for s in (1, 2, 3)}
+    assert len(hashes) == 1

@@ -74,7 +74,7 @@ COMPANY_WORDS = sorted(
      "parloa", "saronic", "workhelix", "outreach.io", "amplitude", "intercom", "cresta", "labelbox",
      "cloudflare", "ramp.com", "writer.com", "modal labs", "socket.dev", "handshake ai", "turing.com",
      "braze", "tines"},
-    key=len, reverse=True)
+    key=lambda w: (-len(w), w))                    # deterministic order (the protocol hash uses it)
 COMPANY_RE = re.compile(r"\b(" + "|".join(re.escape(c) for c in COMPANY_WORDS) + r")\b", re.I)
 
 
