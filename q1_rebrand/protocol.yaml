@@ -5,7 +5,11 @@
 # v2 (2026-11-15) replaces v1 (frozen 2026-11-14) before any held-out data was collected. It adds the
 # technical-consultant comparison (the rival reading: FDE = renamed post-sales consultant), fixes FDE and SA
 # title labels, and fixes masking of new company names. v1's record is kept in frozen/superseded/v1/.
-version: q1-protocol-v2
+#
+# v3 (2026-11-15) replaces v2, again before any held-out data: non-technical "forward deployed" titles
+# (accountant, banker, recruiter, PM, consultant...) are no longer FDE. They form their own family, fd_nontech,
+# tracked over time and left out of every test. v2's record is kept in frozen/superseded/v2/.
+version: q1-protocol-v3
 
 # Dataset
 min_chars: 500                 # postings shorter than this (after cleaning) are stubs

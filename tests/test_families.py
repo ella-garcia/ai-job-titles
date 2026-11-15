@@ -80,3 +80,19 @@ def test_company_group():
 ])
 def test_protocol_v2_labels(title, expected):
     assert family(title) == expected
+
+
+@pytest.mark.parametrize("title, expected", [
+    ("Forward Deployed Accountant", "fd_nontech"),
+    ("Forward Deployed Banker, EMEA", "fd_nontech"),
+    ("Forward Deployed Recruiter", "fd_nontech"),
+    ("Senior Communications Manager, Forward Deployed Engineering", "fd_nontech"),
+    ("Forward Deployed Product Manager, Enterprise", "fd_nontech"),
+    ("Forward Deployed Process Consultant", "fd_nontech"),
+    ("Forward Deployed Engineer", "fde"),
+    ("Manager, Forward Deployed Engineering", "fde"),
+    ("Forward Deployed Research Scientist", "fde"),
+    ("Deployment Strategist", "fde"),
+])
+def test_protocol_v3_nontechnical_forward_deployed(title, expected):
+    assert family(title) == expected
