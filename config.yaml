@@ -29,9 +29,17 @@ spain_pattern: 'spain|españa|madrid|barcelona|valencia|m[aá]laga|sevilla|sevil
 
 # --- Full job boards: every open role. Checked 2026-11-13. ---
 boards:
-  greenhouse: [anthropic, scaleai, databricks, gleanwork, thoughtworks, a16z]
-  lever: [palantir]
-  ashby: [openai, cohere, sierra, harvey, snowflake, ycombinator]
+  # Every slug checked live against the board API. Companies after the first line of each list were added
+  # 2026-11-15 from a Grok search for FDE employers: not in the frozen development set (held-out only).
+  greenhouse: [anthropic, scaleai, databricks, gleanwork, thoughtworks, a16z,
+               andurilindustries, c3iot, cloudflare, coreweave, cresta, datadog, dominodatalab, gitlab,
+               intercom, invisibletech, mongodb, stripe, togetherai, turing, vercel, figma, singlestore,
+               braze, snorkelai, labelbox, tines, vannevarlabs, workhelix]
+  lever: [palantir, outreach]
+  ashby: [openai, cohere, sierra, harvey, snowflake, ycombinator,
+          mistral.ai, elevenlabs, hebbia-ai, ramp, decagon, writer, baseten, applied, cognition, cursor,
+          deepgram, legora, modal, notion, rogo, zip, parloa, amplitude, socket, claylabs, sentry,
+          handshake, langchain, replit, saronic]
 
 company_group:
   anthropic: ai_native
@@ -47,6 +55,56 @@ company_group:
   thoughtworks: consulting
   a16z: vc_accelerator          # the firm's own roles
   ycombinator: vc_accelerator
+  # Added 2026-11-15
+  mistral.ai: ai_native
+  elevenlabs: ai_native
+  hebbia-ai: ai_native
+  decagon: ai_native
+  writer: ai_native
+  baseten: ai_native
+  cognition: ai_native
+  cursor: ai_native
+  deepgram: ai_native
+  legora: ai_native
+  modal: ai_native
+  rogo: ai_native
+  togetherai: ai_native
+  cresta: ai_native
+  snorkelai: ai_native
+  labelbox: ai_native
+  invisibletech: ai_native
+  turing: ai_native
+  langchain: ai_native
+  replit: ai_native
+  parloa: ai_native
+  workhelix: ai_native
+  c3iot: ai_native
+  cloudflare: data_software
+  coreweave: data_software
+  datadog: data_software
+  dominodatalab: data_software
+  gitlab: data_software
+  mongodb: data_software
+  singlestore: data_software
+  stripe: data_software
+  vercel: data_software
+  figma: data_software
+  notion: data_software
+  intercom: data_software
+  amplitude: data_software
+  sentry: data_software
+  socket: data_software
+  ramp: data_software
+  zip: data_software
+  braze: data_software
+  outreach: data_software
+  handshake: data_software
+  claylabs: data_software
+  tines: data_software
+  andurilindustries: defense_autonomy
+  saronic: defense_autonomy
+  vannevarlabs: defense_autonomy
+  applied: defense_autonomy
 
 # --- Big employers with public search APIs: searched by keyword. Checked 2026-11-13. ---
 # Not reachable without a bot check or private API (do not work around it): Apple, Google, Meta, Tesla,
@@ -100,6 +158,15 @@ wayback:
     openai: ['boards.greenhouse.io/openai', 'jobs.lever.co/openai/', 'jobs.ashbyhq.com/openai']
     anthropic: ['boards.greenhouse.io/anthropic', 'jobs.lever.co/anthropic/']
     scaleai: ['boards.greenhouse.io/scaleai', 'jobs.lever.co/scaleai/']
+    # Added 2026-11-15: companies with FDE postings before Nov 2022 (from HN and archived boards).
+    # Greenhouse/Lever URLs carry only an ID, so the id-only cap applies.
+    c3iot: ['boards.greenhouse.io/c3iot']
+    andurilindustries: ['jobs.lever.co/anduril/']
+    singlestore: ['memsql.com/careers', 'boards.greenhouse.io/singlestore']
+    claylabs: ['jobs.lever.co/clay/']
+    baseten: ['baseten.co/careers', 'jobs.ashbyhq.com/baseten']
+    braze: ['boards.greenhouse.io/braze']
+    cloudflare: ['boards.greenhouse.io/cloudflare']
     google_cloud: ['careers.google.com/jobs/results/']
   snapshots_per_cell: 20           # snapshots checked per prefix x period
   min_interval: 5.0                # seconds between Archive requests: it allows ~15 a minute and blocks clients above that
@@ -111,6 +178,15 @@ wayback:
     openai: ['boards.greenhouse.io/openai', 'jobs.lever.co/openai/', 'jobs.ashbyhq.com/openai']
     anthropic: ['boards.greenhouse.io/anthropic', 'jobs.lever.co/anthropic/']
     scaleai: ['boards.greenhouse.io/scaleai', 'jobs.lever.co/scaleai/']
+    # Added 2026-11-15: companies with FDE postings before Nov 2022 (from HN and archived boards).
+    # Greenhouse/Lever URLs carry only an ID, so the id-only cap applies.
+    c3iot: ['boards.greenhouse.io/c3iot']
+    andurilindustries: ['jobs.lever.co/anduril/']
+    singlestore: ['memsql.com/careers', 'boards.greenhouse.io/singlestore']
+    claylabs: ['jobs.lever.co/clay/']
+    baseten: ['baseten.co/careers', 'jobs.ashbyhq.com/baseten']
+    braze: ['boards.greenhouse.io/braze']
+    cloudflare: ['boards.greenhouse.io/cloudflare']
   collect_periods: [P0, P1]        # 2025 onward comes from the weekly snapshots
   max_per_cell: 300                # postings per prefix x period when the URL shows the title (only targets fetched)
   max_per_cell_id_only: 100        # ... when it doesn't: every page must be fetched to read the title
