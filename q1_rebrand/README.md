@@ -36,32 +36,36 @@ reading that FDE is a renamed consultant rather than a renamed SA.
    headline < distinct-roles anchor, consultant > near-synonym anchor, and consultant < headline.
 7. **Terms:** words in the top 25 in at least 4 of the 5 outer folds.
 
-## Development-set results (exploratory, protocol v3, snapshot 2026-11-13)
+## Development-set results (exploratory, protocol v4, snapshot 2026-11-13)
 
 These numbers come from the data used to set up the method, so they are not the result to quote. The
 held-out number from `make q1-final` replaces them once the post-freeze pulls are in.
 
 | Test | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
 | --- | --- | --- | --- | --- | --- |
-| FDE vs SA, same companies (headline) | 286 | 5 | 0.818 | 0.63–0.94 | 0.55 |
-| FDE vs SA, all companies | 542 | 21 | 0.865 | 0.80–0.93 | 0.54 |
+| FDE vs SA, same companies (headline) | 294 | 5 | 0.796 | 0.62–0.92 | 0.54 |
+| FDE vs SA, all companies | 552 | 21 | 0.850 | 0.77–0.93 | 0.53 |
 | SA "architect" vs "engineer" (near-synonym anchor) | 128 | 4 | 0.523 | 0.46–0.61 | 0.58 |
 | SA vs product manager (distinct anchor) | 276 | 7 | 0.946 | 0.85–0.99 | 0.54 |
-| FDE vs technical consultant | 140 | 2 | 0.521 | 0.50–0.55 | 0.56 |
+| FDE vs technical consultant | 140 | 2 | 0.529 | 0.50–0.57 | 0.56 |
 
-Headline companies: Amazon, Capgemini, Databricks, Salesforce, Snowflake (ServiceNow dropped below 8 FDE
-postings once its non-technical "forward deployed" titles were excluded).
+Headline companies: Amazon, Capgemini, Databricks, Salesforce, Snowflake.
 
 Pre-registered comparisons (one-sided, Holm-corrected over the four):
 
-- **Headline > near-synonym:** +0.30 (95% CI 0.09–0.43), Holm p = 0.002.
-- **Headline < distinct:** −0.13 (95% CI −0.32 to 0.02), Holm p = 0.08, not significant.
-- **Consultant > near-synonym:** −0.00 (95% CI −0.09 to 0.07), Holm p = 0.52, not significant.
-- **Consultant < headline:** −0.30 (95% CI −0.42 to −0.11), Holm p = 0.002.
-- **Across 10 sampling seeds** the headline averages 0.837 (sd 0.039).
-- **Stable terms towards FDE:** engineers, production, delivery, ps (professional services), execution, deploy,
-  environments, alongside, directly, design build. **Towards SA:** SAP, sales, pre-sales, market, mobile,
-  design implementation, digital, data analytics.
+- **Headline > near-synonym:** +0.27 (95% CI 0.07–0.41), Holm p = 0.002.
+- **Headline < distinct:** −0.15 (95% CI −0.34 to −0.00), Holm p = 0.043.
+- **Consultant > near-synonym:** +0.01 (95% CI −0.09 to 0.08), Holm p = 0.40, not significant.
+- **Consultant < headline:** −0.27 (95% CI −0.40 to −0.09), Holm p = 0.003.
+- **Across 10 sampling seeds** the headline averages 0.822 (sd 0.041).
+- **Stable terms towards FDE:** production, engineers, delivery, directly, deploy, alongside, AI solutions,
+  design build. **Towards SA:** sales, pre-sales, account, mobile, market, digital, SAP, data analytics.
+
+**"Forward deployed" titles that are not FDE.** Titles are grouped by their role word, not by industry words
+("FDE, Legal" is an FDE). On the development set: 465 FDE postings, 18 `fd_hybrid` (product, program and
+engagement managers, consultants, enablement) and 9 `fd_nontech` (finance engineers, recruiter,
+communications, GRC). Both groups stay out of every test. Hybrids are judged by their requirements only in
+exploratory work: using text to define FDE and then classifying on text would be circular.
 
 Reading: FDE is clearly not a renamed pre-sales SA, and its vocabulary is post-sales delivery. On this
 development set FDE could not be told apart from technical consultants, **but that test rests on only two
@@ -86,7 +90,10 @@ and hardware forward-deployed roles were excluded. v1's development results (hea
 v2 the same day, also before any post-freeze snapshot: non-technical "forward deployed" titles (accountant,
 banker, recruiter, PM, consultant and similar) stopped counting as FDE and became their own family,
 `fd_nontech`, left out of every test. v2's results (headline 0.854, consultant 0.543) and record are in
-[frozen/superseded/v2](frozen/superseded/v2).
+[frozen/superseded/v2](frozen/superseded/v2). v4 replaced v3 the same day, before any post-freeze snapshot:
+v3 read industry words as roles and dropped real FDEs ("FDE, Legal", "FDE - Communications", Capgemini's
+"Consultant, FDE" grade). v4 decides by the role word and splits the excluded titles into `fd_nontech` and
+`fd_hybrid`. v3's results (headline 0.818) and record are in [frozen/superseded/v3](frozen/superseded/v3).
 
 ## Held-out design
 
