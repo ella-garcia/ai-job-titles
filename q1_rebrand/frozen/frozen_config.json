@@ -1,0 +1,11 @@
+{
+  "protocol": "q1-protocol-v2",
+  "protocol_hash": "1dd4924cb6d8da466a9520543f95e5cbe50c984cc0c17741c15734f8db79ae0a",
+  "git_commit": "95dd4d024405662ff696de0ab3c20794de7604cf",
+  "frozen_at": "2026-11-13",
+  "frozen_on": "2026-11-15",
+  "dev_snapshots": [
+    "2026-11-13"
+  ],
+  "dev_postings": 7706
+}
