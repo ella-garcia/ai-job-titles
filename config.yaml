@@ -9,8 +9,10 @@ periods:                              # P0 pre-ChatGPT, P1 first wave, P2 deploy
 
 # Role families: first matching pattern wins, so order matters. Case-insensitive.
 families:
-  fde: 'forward[- ]deployed|deployment strateg'
-  sa_ce: 'solutions? architect|customer engineer|solutions? engineer|arquitect[oa]s?(/a)? de soluciones|preventa|pre-?sales'
+  fde: 'forward[- ]deployed|deployment strateg|(agent|ai) deployment engineer|^deployed engineer'
+  # Post-sales delivery roles (Q1 protocol v2): checked before sa_ce, so delivery/resident SAs land here.
+  tech_consultant: 'technical consultant|consultor[a]? t[eé]cnic|professional services|implementation (engineer|consultant|specialist)|(delivery|resident) solutions? architect'
+  sa_ce: 'solutions? architect|customer engineer|solutions? engineer|arquitect[oa]s?(/a)? de soluciones|preventa|pre-?sales|sales engineer'
   ai_pm: '\bai\b.*product manager|product manager.*\bai\b'
   pm: 'product manager'
   designer: '(product|ux) designer|design engineer'
@@ -23,7 +25,8 @@ families:
 
 # Titles that match a family pattern but are a different job: labelled 'other' before families are tried.
 # Hardware, chip and facilities "design engineers" (Nvidia, Amazon data centers) are not product designers.
-exclude_titles: '\b(asic|chip|circuit|physical|mask|mixed[- ]signal|analog|rfic|rf|sram|mechanical|electrical|controls|layout|rtl|fpga|silicon|hardware|packaging|power|civil|structural|hvac|optical|thermal)\b.*design engineer|data center design|design engineering\b'
+# Hardware "forward deployed" roles (Saronic, Anduril build/production) are not FDE software roles.
+exclude_titles: '\b(asic|chip|circuit|physical|mask|mixed[- ]signal|analog|rfic|rf|sram|mechanical|electrical|controls|layout|rtl|fpga|silicon|hardware|packaging|power|civil|structural|hvac|optical|thermal)\b.*design engineer|data center design|design engineering\b|\b(mechanical|electrical|hardware|build)\b.*forward deployed|forward deployed (build|production)\b|forward deployed.*\b(mechanical|electrical|hardware) engineer'
 
 spain_pattern: 'spain|españa|madrid|barcelona|valencia|m[aá]laga|sevilla|seville|bilbao|, es\b|\bes\)'
 
