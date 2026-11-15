@@ -9,6 +9,9 @@ periods:                              # P0 pre-ChatGPT, P1 first wave, P2 deploy
 
 # Role families: first matching pattern wins, so order matters. Case-insensitive.
 families:
+  # Non-technical "forward deployed" titles (accountant, banker, recruiter, PM...): tracked over time as a group
+  # of their own, never counted as FDE (protocol v3). Checked before fde.
+  fd_nontech: 'forward[- ]deployed.*\b(accountant|banker|investor|recruiter|recruiting|talent|communications|marketing|sales development|analyst|assurance|grc|process consultant|value acceleration|consultant|product manager|program manager|finance|legal|counsel|lawyer|designer|accelerator|operations|people partner|enablement|production lead)\b|\b(accountant|banker|investor|recruiter|recruiting|talent|communications|marketing|sales development|analyst|assurance|grc|process consultant|value acceleration|consultant|product manager|program manager|finance|legal|counsel|lawyer|designer|accelerator|operations|people partner|enablement|production lead)\b.*forward[- ]deployed|^(?!.*(engineer|developer|architect|software|scientist|research|technical|strateg|\bml\b|\bai\b)).*forward[- ]deployed'
   fde: 'forward[- ]deployed|deployment strateg|(agent|ai) deployment engineer|^deployed engineer'
   # Post-sales delivery roles (Q1 protocol v2): checked before sa_ce, so delivery/resident SAs land here.
   tech_consultant: 'technical consultant|consultor[a]? t[eé]cnic|professional services|implementation (engineer|consultant|specialist)|(delivery|resident) solutions? architect'
