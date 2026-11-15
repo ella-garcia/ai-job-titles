@@ -9,7 +9,13 @@
 # v3 (2026-11-15) replaces v2, again before any held-out data: non-technical "forward deployed" titles
 # (accountant, banker, recruiter, PM, consultant...) are no longer FDE. They form their own family, fd_nontech,
 # tracked over time and left out of every test. v2's record is kept in frozen/superseded/v2/.
-version: q1-protocol-v3
+#
+# v4 (2026-11-15) replaces v3, again before any held-out data. v3 read industry words as roles and dropped real
+# FDEs ("FDE, Legal", "FDE - Communications", Capgemini's "Consultant, FDE" grade). v4 decides by the title's
+# role word and splits the excluded titles into fd_nontech (banker, accountant, recruiter, finance engineer...)
+# and fd_hybrid (PM, program/engagement manager, consultant, enablement...). Both stay out of every test.
+# v3's record is kept in frozen/superseded/v3/.
+version: q1-protocol-v4
 
 # Dataset
 min_chars: 500                 # postings shorter than this (after cleaning) are stubs
