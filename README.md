@@ -41,7 +41,7 @@ make week1
 
 ## Where the data lives
 
-The repo is private for now; we will make it public with the article. Data is never in git. The data folder is set by `AJT_DATA` in `.env`:
+The repo is private for now; we will make it public with the article. Data is never on `main`; collected data is kept on the `data` branch (below). The local data folder is `./data`, or `AJT_DATA` in `.env`:
 
 ```
 <AJT_DATA>/
@@ -52,13 +52,13 @@ The repo is private for now; we will make it public with the article. Data is ne
 └── manifest.csv  # one row per download: source, URL, sha256, rows, licence
 ```
 
-To share data between collaborators, point `AJT_DATA` at a shared Google Drive folder synced with Google Drive for desktop. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Collaborators share data through the `data` branch: `make snapshots` copies it into `raw/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Weekly pull
 
 Live job boards only show today's roles, so a scheduled GitHub Action ([weekly-pull.yml](.github/workflows/weekly-pull.yml)) pulls the boards and big employers every Monday and commits them to the **`data` branch** of this repo. That branch holds only snapshots and shares no history with `main`, so code work never touches it. Run it by hand from *Actions → weekly-pull → Run workflow*.
 
-To use the snapshots locally, run `make snapshots`: it checks out the `data` branch in `.snapshots/` (git-ignored) and copies new files into your `AJT_DATA/raw/`.
+One-off collections are kept there too: the Hacker News extract (`raw/hn/`) and the archived postings (`raw/wayback/`). To use them locally, run `make snapshots`: it checks out the `data` branch in `.snapshots/` (git-ignored) and copies new files into your `AJT_DATA/raw/`. It never overwrites a file you already have.
 
 **Before this repo is made public, delete the `data` branch** (it holds scraped posting text), or publish a fresh copy of `main` as a new public repo.
 
