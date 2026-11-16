@@ -5,7 +5,7 @@ PY := uv run python -m pipeline
 setup:            ## install Python 3.11 + pinned deps, git hooks, and a .env to fill in
 	uv sync
 	uv run pre-commit install
-	@test -f .env || (cp .env.example .env && echo "Created .env: fill in AJT_DATA, GCP_PROJECT, KAGGLE_*")
+	@test -f .env || (cp .env.example .env && echo "Created .env (optional settings). Next: make snapshots")
 
 analysis-deps:    ## add the heavier analysis libraries (embeddings, topic models, ...)
 	uv sync --extra analysis
