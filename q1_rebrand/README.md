@@ -82,6 +82,32 @@ paragraph, each under the 30% boilerplate threshold, so none is removed. A sensi
 lowered Capgemini's SA-like share to 35–45% and moved the headline from 0.854 to 0.895. The frozen threshold
 was not changed after seeing this; the held-out report should include the same sensitivity run.
 
+**FDE against each SA title type and against support engineers (exploratory, outside the frozen protocol).**
+[explore_titles.py](explore_titles.py) splits the SA group by title and adds post-sales technical support
+(Support Engineer, Customer Success Engineer, Technical Support; internal IT support left out), with the same
+sampling, model and uncertainty as the frozen tests. The support group's title words are masked too. Its labels
+live in that file, so the frozen protocol is unchanged.
+
+| Test (development set) | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
+| --- | --- | --- | --- | --- | --- |
+| FDE vs SA, pooled (frozen headline, re-run) | 294 | 5 | 0.796 | 0.62–0.92 | 0.55 |
+| FDE vs Solutions Architect titles, same companies | 230 | 4 | 0.704 | 0.52–0.90 | 0.54 |
+| FDE vs Solutions / Customer / Sales Engineer titles, same companies | 156 | 4 | 0.795 | 0.58–0.93 | 0.57 |
+| FDE vs Solutions Architect titles, all companies | 444 | 20 | 0.896 | 0.85–0.94 | 0.54 |
+| FDE vs Solutions / Customer / Sales Engineer titles, all companies | 408 | 18 | 0.877 | 0.79–0.94 | 0.54 |
+| FDE vs support engineers, same companies | 76 | 3 | 0.961 | 0.81–1.00 | 0.57 |
+| FDE vs support engineers, all companies | 122 | 17 | 0.975 | 0.93–1.00 | 0.56 |
+| Support engineers vs SA, same companies | 34 | 2 | 0.824 | 0.63–1.00 | 0.62 |
+
+- **FDE is about as far from Solutions Architects as from Solutions Engineers.** The same-company gap
+  (0.70 vs 0.80) is not significant (difference 95% CI −0.33 to 0.37), and across all companies both are near
+  0.88–0.90. Pooling them in the frozen SA group is therefore reasonable. Customer Engineer itself is almost
+  absent (one posting): its main user, Google Cloud, is not a source.
+- **FDE is not a renamed support engineer.** FDE vs support is near perfect, above the near-synonym anchor
+  (+0.44, Holm p = 0.002) and, if anything, further apart than FDE vs SA. Stable terms towards support:
+  issues, troubleshooting, incident, root cause, resolution; towards FDE: production, build, deployments, agent.
+- **Small samples:** the same-company support tests rest on two or three companies (Amazon, OpenAI, Snowflake).
+
 **Protocol history.** v1 was frozen on 2026-11-14 and superseded by v2 on 2026-11-15, before any post-freeze
 snapshot existed. v2 added the consultant comparison and fixed labels and masking: delivery/resident SAs
 moved from SA to technical consultant, sales engineers joined SA, agent/AI deployment engineers joined FDE,
