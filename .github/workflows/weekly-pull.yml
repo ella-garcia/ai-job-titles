@@ -13,7 +13,7 @@ concurrency: weekly-pull
 jobs:
   pull:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 200          # boards ~5 min + employers 110 + second pass 45 + commits
     steps:
       - name: Check out the code (main)
         uses: actions/checkout@v4
@@ -24,13 +24,30 @@ jobs:
           path: .snapshots
       - uses: astral-sh/setup-uv@v3
       - run: uv sync
-      - name: Pull boards and big employers
+      # Boards are committed before the big employers start: Workday sites rate-limit GitHub's runners, and
+      # on 2026-11-16 the employers step ran past the job's time limit, so nothing at all was saved.
+      - name: Pull boards
         env:
           AJT_DATA: ${{ github.workspace }}/.snapshots/snapshots
+        run: uv run python -m pipeline boards
+      - name: Commit the boards to the data branch
+        working-directory: .snapshots
         run: |
-          uv run python -m pipeline boards
-          uv run python -m pipeline employers
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A snapshots          # the data branch's .gitignore leaves out runs/ and cache/
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -q -m "Weekly pull $(date -u +%F): boards"
+          git push origin HEAD:data
+      - name: Pull big employers (time-boxed; finished employers are saved as they complete)
+        timeout-minutes: 110
+        continue-on-error: true
+        env:
+          AJT_DATA: ${{ github.workspace }}/.snapshots/snapshots
+        run: uv run python -m pipeline employers
       - name: Second pass for rate-limited employers (resumes where they stopped)
+        timeout-minutes: 45
+        continue-on-error: true
         env:
           AJT_DATA: ${{ github.workspace }}/.snapshots/snapshots
         run: |
@@ -41,12 +58,13 @@ jobs:
           else
             echo "All employers finished"
           fi
-      - name: Commit the snapshot to the data branch
+      - name: Commit the employers to the data branch
+        if: always()
         working-directory: .snapshots
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A snapshots          # the data branch's .gitignore leaves out runs/ and cache/
+          git add -A snapshots
           if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
-          git commit -q -m "Weekly pull $(date -u +%F)"
+          git commit -q -m "Weekly pull $(date -u +%F): big employers"
           git push origin HEAD:data
