@@ -168,3 +168,9 @@ board_ashby,https://api.ashbyhq.com/posting-api/job-board/handshake,2026-11-23,r
 board_ashby,https://api.ashbyhq.com/posting-api/job-board/langchain,2026-11-23,raw/boards/2026-11-23/ashby_langchain.json.gz,ff330ff609c6ab15669a35904335295120241ce42d5582e6a8b7fe5e823a18dd,100,scraped: aggregates only
 board_ashby,https://api.ashbyhq.com/posting-api/job-board/replit,2026-11-23,raw/boards/2026-11-23/ashby_replit.json.gz,c77969baf2cf15e52158c07e5278a0ad52a9b1616087cba301d6a6f18cc38407,38,scraped: aggregates only
 board_ashby,https://api.ashbyhq.com/posting-api/job-board/saronic,2026-11-23,raw/boards/2026-11-23/ashby_saronic.json.gz,0a53f35d51c0f90b73e4fcf1709da79430365ce3c1b05d33f4f2ea5efa175517,297,scraped: aggregates only
+employer_amazon,amazon:amazon,2026-11-23,raw/employers/2026-11-23/amazon.jsonl.gz,4628c29fd778821bb0e357ed54dd7650f2d3eabbe7239607a11cbc0f912347b8,1694,scraped: aggregates only
+employer_capgemini,capgemini:capgemini,2026-11-23,raw/employers/2026-11-23/capgemini.jsonl.gz,74f6af01119d05e2adcdfcac98908d8f719fc74d77bf40bf1af97f72f5b000cc,2044,scraped: aggregates only
+employer_smartrecruiters,smartrecruiters:servicenow,2026-11-23,raw/employers/2026-11-23/servicenow.jsonl.gz,4588319f6ec36d5b2a7896319bab0861ced8dc46b3898e1367ecb853ca4d0608,656,scraped: aggregates only
+employer_successfactors,successfactors:telefonica,2026-11-23,raw/employers/2026-11-23/telefonica.jsonl.gz,037a5581207be7735fac79f834a6cfa12f6c16ede0404d7e975b3bdf13972749,93,scraped: aggregates only
+employer_smartrecruiters,smartrecruiters:telefonicatech,2026-11-23,raw/employers/2026-11-23/telefonicatech.jsonl.gz,af8945fd69d073652b7eb4daa72e7b3ab3846cd7e4932b418a019db5b5ca7e66,47,scraped: aggregates only
+employer_successfactors,successfactors:vodafone,2026-11-23,raw/employers/2026-11-23/vodafone.jsonl.gz,7f4aa0f275891e13bf59316d101d0151252d41107a73a2b323a68e8b68f84ddb,81,scraped: aggregates only
