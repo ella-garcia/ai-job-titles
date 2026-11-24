@@ -1,6 +1,7 @@
 """Command line: `python -m pipeline <step>` (or `make <step>`).
 
-Steps: boards, employers, wayback, archive, hn, kaggle, summary, env, sync-snapshots.
+Steps: boards, employers, wayback, archive, hn, kaggle, summary, title-coverage, cluster-titles,
+       env, sync-snapshots.
 """
 import argparse
 import shutil
@@ -63,6 +64,8 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("hn", help="HN Who is Hiring")
     sub.add_parser("kaggle", help="Kaggle LinkedIn sets")
     sub.add_parser("summary", help="coverage tables and week-1 summary")
+    sub.add_parser("title-coverage", help="inventory titles: family vs other by source/company")
+    sub.add_parser("cluster-titles", help="JobBERT + HDBSCAN on unmatched titles (needs analysis extra)")
     sub.add_parser("env", help="record package versions and git commit")
     sub.add_parser("sync-snapshots", help="copy weekly snapshots from .snapshots/ into AJT_DATA")
     args = parser.parse_args(argv)
@@ -96,6 +99,12 @@ def main(argv: list[str] | None = None) -> None:
         from .summary import coverage, week1_summary
         print(coverage().to_string())
         print(week1_summary())
+    elif args.step == "title-coverage":
+        from .title_coverage import report
+        print(report())
+    elif args.step == "cluster-titles":
+        from .cluster_titles import run as cluster_run
+        print(cluster_run())
     elif args.step == "sync-snapshots":
         sync_snapshots()
     print(f"Results in {run_dir()}")

@@ -1,6 +1,6 @@
 PY := uv run python -m pipeline
 
-.PHONY: setup analysis-deps test lint week1 boards employers wayback archive hn kaggle summary notebook snapshots q1 q1-freeze q1-final q1-over-time
+.PHONY: setup analysis-deps test lint week1 boards employers wayback archive hn kaggle summary title-coverage cluster-titles notebook snapshots golden kappa q4 q1 q1-freeze q1-final q1-over-time
 
 setup:            ## install Python 3.11 + pinned deps, git hooks, and a .env to fill in
 	uv sync
@@ -39,6 +39,21 @@ kaggle:           ## Kaggle LinkedIn sets -> Parquet
 
 summary:          ## coverage tables + week1_summary.json in runs/<date>/
 	$(PY) summary
+
+title-coverage:   ## inventory scraped titles: family vs other by source/company
+	$(PY) title-coverage
+
+cluster-titles:   ## JobBERT + HDBSCAN suggestions for family_overrides (needs analysis-deps)
+	$(PY) cluster-titles
+
+golden:           ## stratified golden-set sample under AJT_DATA/processed/golden/
+	uv run python -m validation.sample_golden
+
+kappa:            ## Cohen's kappa between two label CSVs (pass A= and B=)
+	uv run python -m validation.kappa --a $(A) --b $(B)
+
+q4:               ## AI-intensity scores (local CSV with text column; needs analysis-deps)
+	uv run python -m q4_ai_washing
 
 notebook:
 	uv run jupyter lab notebooks/
