@@ -26,10 +26,16 @@ def load() -> dict:
 def labelling() -> dict:
     """The parts of config.yaml and data.py that decide labels and masking: frozen with the protocol."""
     from pipeline.config import CFG
+    from pipeline.families import OVERRIDES_PATH, _overrides
 
     from .data import COMPANY_WORDS, TITLE_WORDS
-    return {"families": CFG["families"], "exclude_titles": CFG.get("exclude_titles"),
-            "title_words": TITLE_WORDS.pattern, "company_words": COMPANY_WORDS}
+    # Non-empty overrides are hashed so a hand label change invalidates the freeze; empty keeps v4 hash.
+    out = {"families": CFG["families"], "exclude_titles": CFG.get("exclude_titles"),
+           "title_words": TITLE_WORDS.pattern, "company_words": COMPANY_WORDS}
+    overrides = dict(sorted(_overrides().items())) if OVERRIDES_PATH.exists() else {}
+    if overrides:
+        out["family_overrides"] = overrides
+    return out
 
 
 def protocol_hash() -> str:

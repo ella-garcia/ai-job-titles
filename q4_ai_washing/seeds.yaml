@@ -1,0 +1,23 @@
+# Controlled AI-skill vocabulary for Q4 (paper v1). Not a general ESCO/O*NET skill ontology.
+# Threshold for "AI-intense" is set on the golden set (ai_bullet) after labelling — see config.yaml.
+phrases:
+  - "train or fine-tune large language models"
+  - "build and evaluate retrieval-augmented generation systems"
+  - "deploy machine learning models to production"
+  - "design multi-agent LLM workflows"
+  - "prompt engineering and LLM evaluation harnesses"
+  - "integrate foundation models into customer products"
+  - "MLOps for generative AI pipelines"
+  - "vector search and embedding-based retrieval"
+  - "safety red-teaming of generative models"
+  - "fine-tuning transformers on domain data"
+  - "build AI agents that call tools and APIs"
+  - "measure hallucination rates and model quality"
+  - "productionize generative AI features"
+  - "apply computer vision or speech models in products"
+  - "own the AI roadmap for a customer deployment"
+  - "set up evaluation datasets for LLM applications"
+  - "ship features on top of OpenAI Anthropic or open-weight models"
+  - "optimize inference latency and cost for LLMs"
+  - "translate customer problems into ML problem formulations"
+  - "implement guardrails and content filtering for generative AI"

@@ -26,9 +26,26 @@ families:
   so_gtm: 'gtm engineer|strategy (&|and) operations|revops|revenue operations'
   legal: 'legal engineer|legal operations|legal ops'
   prompt: 'prompt engineer'
-  # Added for big employers and consulting; not in the plan's six families (open decision)
+  # Kept in v1 (DEVELOPER_NOTES §11): big-employer / consulting AI hiring is in-scope for title counts.
   ai_eng: '\b(ai|ml|llm|genai|machine learning)\b.*engineer|ingenier[oa](/a)?.*\b(ia|inteligencia artificial|machine learning)\b'
   ai_consultant: '\b(ai|genai|generative ai|machine learning)\b.*consultant|consultant.*\b(ai|genai)\b|consultor[a]?(/a)?.*\b(ia|inteligencia artificial)\b'
+
+# Hand labels for titles the seed regexes leave as other (from JobBERT + HDBSCAN clusters).
+family_overrides_path: pipeline/family_overrides.csv
+
+title_clustering:
+  model: TechWolf/JobBERT-v2
+  min_cluster_size: 10
+  rapidfuzz_ratio: 92
+
+golden_set:
+  n: 150
+
+# Q4 AI-intensity (skills layer for the paper). threshold: set after golden ai_bullet labelling.
+ai_intensity:
+  model: sentence-transformers/all-MiniLM-L6-v2
+  threshold: null
+  min_recall: 0.5
 
 # Titles that match a family pattern but are a different job: labelled 'other' before families are tried.
 # Hardware, chip and facilities "design engineers" (Nvidia, Amazon data centers) are not product designers.

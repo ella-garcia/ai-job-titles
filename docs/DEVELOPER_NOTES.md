@@ -98,9 +98,11 @@ case_id, fiscal_year, decision_date, employer, title_raw, title_norm, role_famil
 
 ## 5. Role-family labelling
 
-1. Seed regexes in `config.yaml` (e.g. `forward[- ]deployed`, `deployment strateg`, `solutions? architect`, `customer engineer`, `gtm engineer`, `legal engineer`, `prompt engineer`, `product manager`, `(product|ux) designer`, `design engineer`).
-2. Embed remaining titles with JobBERT, cluster with HDBSCAN, and assign families to clusters by hand.
-3. Log every hand decision in `pipeline/family_overrides.csv` so labels are auditable.
+1. Normalise titles with `pipeline/titles.py` (`title_norm`, `seniority`), then apply seed regexes in `config.yaml` via `pipeline/families.py`.
+2. Inventory coverage: `make title-coverage` (aggregates under `runs/<date>/`).
+3. Embed remaining (`other`) titles with JobBERT, cluster with HDBSCAN (`make cluster-titles`; needs `make analysis-deps`), and assign families to clusters by hand.
+4. Log every hand decision in `pipeline/family_overrides.csv` so labels are auditable (`family()` applies overrides after regexes, before `other`).
+5. Golden family labels: `validation/labelling_guide.md`, `make golden`, then `make kappa A=... B=...`.
 
 ## 6. Method defaults
 
@@ -174,7 +176,7 @@ ai-job-titles/
 - [ ] Final company list for the weekly pull (~30)
 - [ ] Whether Web Data Commons is in v1. If not, cut or rescope the perplexity test, Q6, Q7 and diachronic Word2Vec, which have no other pre-2022 text
 - [ ] Pass mark for the week-1 coverage gate (suggested: ≥30 usable postings per family per period), covering pre-2022 text for every family, not only Palantir on Wayback
-- [ ] Whether to add the two families the big-employer search surfaced (`ai_eng`, `ai_consultant`), or keep them as "other" for v1. The Spain report suggests consulting firms are where most AI hiring sits
+- [x] Keep `ai_eng` and `ai_consultant` as v1 families (not collapsed to other): big-employer / consulting AI hiring is in scope for title counts; seed regexes stay in `config.yaml`
 - [ ] Whether a Spain comparison (Telefónica, Spain-located postings, the nothiring benchmark) goes in the article or stays a follow-up; non-English text is out of v1 scope
 - [ ] Whether to add VC portfolio job boards (e.g. jobs.a16z.com) or keep only the firms' own roles
 - [ ] Numeric thresholds for Q2 ("jumped"), Q3 ("more") and Q4 ("many"), committed before any analysis
