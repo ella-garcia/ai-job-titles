@@ -127,6 +127,49 @@ The development set is every snapshot up to the freeze date. The held-out set is
 later weekly pulls, excluding every development posting and anything nearly identical to one (a reposted
 job). Re-running `make q1-final` with more snapshots (`--rerun`) keeps earlier results with a timestamp.
 
+The first scheduled pull after the freeze (2026-11-16) saved nothing: Workday career sites rate-limited the
+big-employer step until the job hit its time limit, and the only commit step came last. The workflow now
+commits the boards first and time-boxes the employers. The held-out set therefore starts on 2026-11-19.
+
+## Held-out results (protocol v4, snapshots 2026-11-19 and 2026-11-23, run 2026-11-25)
+
+10,169 postings first seen after the freeze, most of them from the 49 boards added on 2026-11-15, so most
+held-out companies were never in the development set.
+
+| Test | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
+| --- | --- | --- | --- | --- | --- |
+| FDE vs SA, same companies (headline) | 40 | 2 | 0.500 | 0.50–0.50 | 0.60 |
+| FDE vs SA, all companies | 466 | 57 | 0.923 | 0.88–0.96 | 0.54 |
+| SA "architect" vs "engineer" (near-synonym anchor) | — | — | not enough data | | |
+| SA vs product manager (distinct anchor) | 268 | 8 | 0.948 | 0.93–0.99 | 0.55 |
+| FDE vs technical consultant | 50 | 2 | 0.560 | 0.53–0.63 | 0.58 |
+
+- **FDE vs SA across 57 companies: 0.923.** On postings and companies never used to set up the method, a
+  classifier that cannot see the title tells FDE from SA almost as well as SA from PM. The separating terms
+  match the development set: production, engineer, delivery, deployment, code, real world towards FDE; sales,
+  pre-sales, account, deals, POCs towards SA.
+- **The same-company tests have not run properly yet.** Only Cloudflare and Databricks posted 8+ of each role
+  in the new weeks. With two companies the model trains on one and tests on the other; it learned nothing
+  that transferred and predicted one class for everything (exactly 0.500; over 10 sampling seeds 0.62, sd
+  0.09). The consultant test failed the same way, and no company had enough new architect and engineer SA
+  postings for the near-synonym anchor.
+- **So the pre-registered comparisons cannot be judged yet.** Two of the four need the near-synonym anchor.
+  "Headline < distinct" is formally significant (Holm p = 0.001) only because the headline is stuck at 0.50,
+  and "consultant < headline" is not significant. These are non-results, not evidence either way.
+- **Next:** `make q1-final --rerun` as weekly pulls add postings, until the same-company tests reach the
+  number of companies the development set had (four or five).
+
+**Boilerplate sensitivity (exploratory, 5% threshold instead of 30%):** all companies 0.897 (0.86–0.94, 52
+companies), distinct 0.966, headline 0.554 (still two companies). The all-companies result does not depend on
+leftover company boilerplate.
+
+**Labels for reruns.** PR #16 (title taxonomy) normalises titles before matching. It leaves the frozen
+patterns and hash unchanged but labels 3 of 19,861 current titles differently from v4: two Solution
+Architect titles become SA and "Senior People Partner | Legal, Operations & People" becomes legal (it should
+stay other). This first held-out result was computed before the merge, with the exact v4 labels; reruns use
+the normalised titles and must say so. Hand overrides added to `pipeline/family_overrides.csv` change the
+hash, after which `make q1-final` refuses to run until a new protocol version is frozen.
+
 ## Over time ([over_time.py](over_time.py))
 
 1. **SA-likeness:** a model trained on current postings scores every archived FDE and SA posting with

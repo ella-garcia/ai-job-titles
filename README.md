@@ -2,7 +2,21 @@
 
 Is a Forward Deployed Engineer a new job, or a Solutions Architect with a new title? We test this with classic NLP on job postings from 2011 to today: embeddings, near-duplicate detection, topic models and classifiers, all validated against a hand-labelled set.
 
-Status: **week 1, data collection.** Findings and charts will appear here.
+Status: **weekly pulls running; Q1 held-out results in.** Charts will appear here.
+
+**Findings so far (Q1, details in [q1_rebrand/README.md](q1_rebrand/README.md)):**
+- **FDE is not a renamed pre-sales Solutions Architect.** With titles and company names hidden, a classifier
+  tells FDE from SA postings with 0.92 accuracy across 57 companies it never saw during development (chance
+  about 0.54; SA vs product manager 0.95). FDE postings talk about production, deployment and code; SA
+  postings about sales, accounts, deals and proofs of concept.
+- **The within-company test needs more weeks.** Only two companies posted enough of both roles since the
+  freeze, so the pre-registered comparison against near-synonym titles cannot be judged yet. On the
+  development set it held (0.80 vs 0.52, Holm p = 0.002).
+- **Nor is FDE a renamed support engineer** (0.96–0.98, exploratory). The technical-consultant comparison is
+  still a non-result (two companies).
+- **Over time (exploratory):** archived FDE postings from before ChatGPT read more like SA (P(FDE) about 0.39)
+  than today's (0.67), while SA postings barely moved. C3.ai, the one company with both roles in the archive,
+  had early FDE postings close to its SA postings, but that rests on five postings.
 
 | Question | Method | Evaluation |
 | --- | --- | --- |
