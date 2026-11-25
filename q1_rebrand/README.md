@@ -159,6 +159,31 @@ held-out companies were never in the development set.
 - **Next:** `make q1-final --rerun` as weekly pulls add postings, until the same-company tests reach the
   number of companies the development set had (four or five).
 
+**Rerun with the 2026-11-25 snapshot (boards, plus Amazon, Capgemini and Salesforce; the other employers
+stopped at Workday rate limits).** 10,856 held-out postings. Earlier results are kept with a timestamp in
+`data/runs/q1/`. This rerun uses the normalised titles from PR #16 (below).
+
+| Test | Postings | Companies | Accuracy | 95% CI | Chance (95th pct) |
+| --- | --- | --- | --- | --- | --- |
+| FDE vs SA, same companies (headline) | 56 | 3 | 0.750 | 0.69–0.81 | 0.55 |
+| FDE vs SA, all companies | 504 | 57 | 0.907 | 0.87–0.94 | 0.54 |
+| SA "architect" vs "engineer" (near-synonym anchor) | — | — | not enough data | | |
+| SA vs product manager (distinct anchor) | 282 | 8 | 0.950 | 0.92–0.99 | 0.55 |
+| FDE vs technical consultant | 50 | 2 | 0.560 | 0.53–0.63 | 0.58 |
+
+- **The headline now runs, thinly.** Intercom joined Cloudflare and Databricks, and FDE vs SA within the same
+  companies is 0.75, close to the development set's 0.80. Its interval is too narrow to trust: the bootstrap
+  resamples whole companies and there are only three. The 10 sampling seeds give the honest spread: mean
+  0.73, sd 0.11 (0.59 to 0.89).
+- **Headline < distinct holds** (−0.20, Holm p = 0.001): FDE is less separable from SA than PM is, as on the
+  development set.
+- **"Consultant < headline" (Holm p = 0.001) is not evidence:** the consultant test is still the two-company
+  non-result near 0.50.
+- **Headline > near-synonym, the main comparison, still cannot run.** Even with Amazon and Capgemini, no
+  company has posted 8+ new SA "architect" and 8+ new SA "engineer" titles since the freeze; most of their SA
+  postings were already in the development set.
+- **All companies:** 0.907 (57 companies).
+
 **Boilerplate sensitivity (exploratory, 5% threshold instead of 30%):** all companies 0.897 (0.86–0.94, 52
 companies), distinct 0.966, headline 0.554 (still two companies). The all-companies result does not depend on
 leftover company boilerplate.
