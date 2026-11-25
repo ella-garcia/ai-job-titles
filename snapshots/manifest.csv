@@ -235,3 +235,6 @@ board_ashby,https://api.ashbyhq.com/posting-api/job-board/handshake,2026-11-25,r
 board_ashby,https://api.ashbyhq.com/posting-api/job-board/langchain,2026-11-25,raw/boards/2026-11-25/ashby_langchain.json.gz,d59e6c88e316795964f0219984e1c417e2ce7699faed8914a0c95a88ecd93af5,101,scraped: aggregates only
 board_ashby,https://api.ashbyhq.com/posting-api/job-board/replit,2026-11-25,raw/boards/2026-11-25/ashby_replit.json.gz,750d62266315524598d1af54d99d953af55dd38924bf1e5bee300deac2e5791f,37,scraped: aggregates only
 board_ashby,https://api.ashbyhq.com/posting-api/job-board/saronic,2026-11-25,raw/boards/2026-11-25/ashby_saronic.json.gz,ddda7f230fe8839d60e9f2a4b62191cbe44e1b298b702b32155ceec8ad8d4d45,305,scraped: aggregates only
+employer_amazon,amazon:amazon,2026-11-25,raw/employers/2026-11-25/amazon.jsonl.gz,8883e5314307073f8167053e984381d05fae243a4987c6a1d2236361bc5be721,1693,scraped: aggregates only
+employer_capgemini,capgemini:capgemini,2026-11-25,raw/employers/2026-11-25/capgemini.jsonl.gz,cc49b782419e7f82b3d3d300e6aa7f4fee701c62bdd69038cb3b69a5ce4a4f25,2021,scraped: aggregates only
+employer_workday,workday:salesforce,2026-11-25,raw/employers/2026-11-25/salesforce.jsonl.gz,917046c6aba02c3bba6f08ac7cb8b4d4c02740bfe072fdf1ba805d9ba3459bf2,839,scraped: aggregates only
