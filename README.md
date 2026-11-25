@@ -6,11 +6,12 @@ Status: **weekly pulls running; Q1 held-out results in.** Charts will appear her
 
 **Findings so far (Q1, details in [q1_rebrand/README.md](q1_rebrand/README.md)):**
 - **FDE is not a renamed pre-sales Solutions Architect.** With titles and company names hidden, a classifier
-  tells FDE from SA postings with 0.92 accuracy across 57 companies it never saw during development (chance
+  tells FDE from SA postings with 0.91–0.92 accuracy across 57 companies it never saw during development (chance
   about 0.54; SA vs product manager 0.95). FDE postings talk about production, deployment and code; SA
   postings about sales, accounts, deals and proofs of concept.
-- **The within-company test needs more weeks.** Only two companies posted enough of both roles since the
-  freeze, so the pre-registered comparison against near-synonym titles cannot be judged yet. On the
+- **The within-company test needs more weeks.** Three companies have posted enough of both roles since the
+  freeze (0.75, close to the development set's 0.80), but too few new SA "architect" and "engineer" titles
+  for the near-synonym anchor, so the main pre-registered comparison cannot be judged yet. On the
   development set it held (0.80 vs 0.52, Holm p = 0.002).
 - **Nor is FDE a renamed support engineer** (0.96–0.98, exploratory). The technical-consultant comparison is
   still a non-result (two companies).
