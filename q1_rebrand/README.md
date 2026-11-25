@@ -108,6 +108,27 @@ live in that file, so the frozen protocol is unchanged.
   issues, troubleshooting, incident, root cause, resolution; towards FDE: production, build, deployments, agent.
 - **Small samples:** the same-company support tests rest on two or three companies (Amazon, OpenAI, Snowflake).
 
+**Title check: which companies' FDE postings read like SA (exploratory, all snapshots to 2026-11-25).**
+[explore_title_check.py](explore_title_check.py) scores every FDE and SA posting with a model that never
+trained on its company and counts FDE postings scoring below 0.4 (cut-off not pre-registered). It supersedes
+the v2 analysis above. Company descriptions inflate the count, so the script also removes company text: a
+sentence in 3 or more of a company's postings that also appears outside its FDE and SA families. Sentences
+shared only between FDE and SA postings are kept.
+
+| | Frozen cleaning | Company text removed |
+| --- | --- | --- |
+| All FDE postings | 7.8% of 690 | 4.3% of 624 |
+| Capgemini | 67% (16 of 24) | 27% (4 of 15) |
+| Cloudflare | 38% (3 of 8) | 38% (3 of 8) |
+| Mistral | 4% (1 of 23) | 22% (5 of 23) |
+| Databricks | 17% (13 of 76) | 7% (4 of 59) |
+| Balanced accuracy, FDE vs SA | 0.916 | 0.932 |
+
+Over half of each Capgemini posting was company text. Amazon, Salesforce, OpenAI and Anthropic have no SA-like
+FDE postings after the step. Mistral's rise is unexplained. Counts are small: a low score flags a posting for a
+person to read and does not prove the title is wrong. The full write-up is in
+[docs/Q1_research_paper.md](../docs/Q1_research_paper.md).
+
 **Protocol history.** v1 was frozen on 2026-11-14 and superseded by v2 on 2026-11-15, before any post-freeze
 snapshot existed. v2 added the consultant comparison and fixed labels and masking: delivery/resident SAs
 moved from SA to technical consultant, sales engineers joined SA, agent/AI deployment engineers joined FDE,
