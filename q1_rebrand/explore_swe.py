@@ -126,9 +126,14 @@ E6_COMPARISONS = [["E6_strat_vs_sa_all", "E5_fde_vs_sa_all_no_strat", "less"],
                   ["E6_strat_vs_sa_same", "E5_fde_vs_sa_same_no_strat", "less"]]
 
 
-def binary_tests(c: pd.DataFrame, p: dict, quick: bool) -> dict:
+SENIOR_GAP = 0.20      # spec section 6: rerun E1 on senior titles if the senior shares differ by more than this
+SENIOR_TESTS = {"E1_senior_fde_vs_swe_all":  ("xgroup", "fde", "swe", False),
+                "E1_senior_fde_vs_swe_same": ("xgroup", "fde", "swe", True)}
+
+
+def binary_tests(c: pd.DataFrame, p: dict, quick: bool, tests: dict = BINARY) -> dict:
     out = {}
-    for name, (col, pos, neg, within) in BINARY.items():
+    for name, (col, pos, neg, within) in tests.items():
         spec = {"label": col, "positive": pos, "negative": neg, "within_company": within}
         r = run_test(c, spec, p, p["seed"], full=not quick)
         if "error" not in r:
@@ -277,6 +282,17 @@ def main(argv=None) -> None:
         t = tests[name].get("terms") or {}
         print(f"{name} terms | strategist: {', '.join(t.get('positive', [])[:12])} | "
               f"other: {', '.join(t.get('negative', [])[:12])}", flush=True)
+    share = out["counts"]["senior_share"]
+    gap = round(abs(share["swe"] - share["fde"]), 3)
+    out["senior_check"] = {"gap": gap, "threshold": SENIOR_GAP, "run": gap > SENIOR_GAP}
+    if gap > SENIOR_GAP:
+        senior = c[c.title.fillna("").str.contains(SENIOR)]
+        print(f"Senior gap {gap} > {SENIOR_GAP}: E1 on senior titles only "
+              f"({(senior.xgroup == 'fde').sum()} FDE, {(senior.xgroup == 'swe').sum()} SWE)", flush=True)
+        sr = binary_tests(senior, p, args.quick, SENIOR_TESTS)
+        for r in sr.values():
+            r.pop("_boot", None)
+        out["senior_check"]["tests"] = sr
     for r in tests.values():
         r.pop("_boot", None)
     out["tests"], out["E1_reading"] = tests, read_e1(tests)

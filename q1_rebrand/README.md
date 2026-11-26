@@ -303,4 +303,7 @@ consultant 0.10 / 1%, support 0.07 / 1%. SA postings, the control, land on SA 92
   exploratory; the confirmation set is the snapshots after the spec is hashed. The same-company E6 tests (2 and
   4 companies) predict one class and are non-results. Software engineer postings skew senior: 53% vs 33% of
   FDE on the development set (20 points, at the spec's threshold) and 50% vs 29% on all snapshots (21 points,
-  over it). The senior-only rerun of E1 the spec asks for has not been done yet.
+  over it). The module now reruns E1 on senior titles only when the gap is over 20 points. On all
+  snapshots (201 senior FDE, 792 senior SWE postings), senior-only FDE vs SWE is 0.942 (0.89–0.98; 50
+  companies; seeds 0.95 ± 0.01), slightly above the 0.929 for all titles, so seniority does not explain E1.
+  The senior same-company version has 2 companies and predicts one class: a non-result.
