@@ -12,9 +12,13 @@ E4  Placement: a five-way model (SA, SWE, ML, support, consultant) trained witho
 E5  FDE vs SA with and without strategist titles
 E6  Strategist titles (Deployment / Forward Deployed Strategist) against SA and against FDE engineer titles
 
-The reading rules in READING_RULES were fixed in the spec before any run and are written to the output.
+The reading rules in READING_RULES are written to the output. The E4 rule was switched from mean
+probabilities to top-class shares on 27 Nov, after the development and 19-25 Nov runs and before the freeze.
+`--freeze` records a hash of the spec, the title rules, the masking and the reading rules, plus the keys of
+every posting seen so far; `--confirm` then runs on postings first seen after the freeze and refuses if
+anything hashed has changed.
 
-Run: uv run python -m q1_rebrand.explore_swe [--quick] [--all | --dates 2026-11-13 ...]
+Run: uv run python -m q1_rebrand.explore_swe [--quick] [--all | --dates 2026-11-13 ... | --freeze | --confirm]
      Default data: the development set (snapshots up to the freeze). --all uses every snapshot and writes
      explore_swe_all.json.
 """
@@ -64,10 +68,12 @@ READING_RULES = {
     "E1": ["FDE vs SWE <= 0.65: R2, SWE is FDE's nearest neighbour",
            "FDE vs SWE >= 0.85 and above FDE vs SA on the same scope: R1 for SWE",
            "between: decided by E4"],
-    "E4 (mean probabilities across FDE postings)": [
-        "P(SWE) >= 0.60: R2", "P(SA) >= 0.60: rebrand reading (check labels first)",
-        "P(SA) >= 0.25 and P(SWE) >= 0.25 and P(SA) + P(SWE) >= 0.70: R3, hybrid of SA and SWE",
-        "no class >= 0.40: R1, FDE sits away from all five neighbours", "anything else: unresolved"],
+    "E4 (share of FDE postings whose highest probability is each class; switched from mean probabilities "
+    "on 27 Nov, before the freeze)": [
+        "top(SWE) >= 0.60: R2", "top(SA) >= 0.60: rebrand reading (check labels first)",
+        "top(SA) >= 0.25 and top(SWE) >= 0.25 and top(SA) + top(SWE) >= 0.70: R3, hybrid of SA and SWE",
+        "no class >= 0.40: R1, FDE sits away from all five neighbours", "anything else: unresolved",
+        "mean probabilities are reported alongside but do not decide the reading"],
     "E5": "if dropping strategists moves all-companies accuracy by more than 0.04, report both and discuss",
     "E6": "added after the first runs, no reading rule; a same-company test that predicts one class (0.500) "
           "is a non-result",
@@ -213,7 +219,7 @@ def placement(c: pd.DataFrame, p: dict, target: str, quick: bool) -> dict:
 
 
 def read_e4(table: dict) -> str:
-    m = {k: v["mean_prob"] for k, v in table.items()}
+    m = {k: v["top_share"] for k, v in table.items()}
     sa, swe = m.get("sa", 0), m.get("swe", 0)
     if swe >= 0.60:
         return "R2: software engineering is FDE's home"
@@ -242,17 +248,71 @@ def read_e1(tests: dict) -> dict:
     return out
 
 
+# --- Freeze and confirmation (spec section 5) ---------------------------------------------------------------
+
+SWE_FROZEN = P.FROZEN_DIR / "explore_swe_frozen.json"
+SWE_KEYS = P.FROZEN_DIR / "explore_swe_seen_keys.txt"     # hashes of postings seen at the freeze, no text
+
+
+def rules_hash() -> str:
+    """Hash of the spec, the title rules, the masking, the tests and the reading rules, on top of the protocol."""
+    rules = {"patterns": {k: v.pattern for k, v in {
+                 "swe_include": SWE_INCLUDE, "swe_exclude": SWE_EXCLUDE, "ml_include": ML_INCLUDE,
+                 "ml_exclude": ML_EXCLUDE, "applied_ai": APPLIED_AI, "strategist": STRATEGIST, "senior": SENIOR,
+                 "extra_mask": EXTRA_MASK, "support_title": SUPPORT_TITLE, "internal_it": INTERNAL_IT,
+                 "support_words": SUPPORT_WORDS}.items()},
+             "neighbours": NEIGHBOURS, "binary": BINARY, "senior_tests": SENIOR_TESTS, "senior_gap": SENIOR_GAP,
+             "e6_comparisons": E6_COMPARISONS, "reading_rules": READING_RULES, "protocol_hash": P.protocol_hash()}
+    extra = json.dumps(rules, sort_keys=True, default=str).encode()
+    return hashlib.sha256(SPEC.read_bytes() + b"\n" + extra).hexdigest()
+
+
+def freeze(p: dict) -> None:
+    if SWE_FROZEN.exists():
+        raise SystemExit(f"Already frozen: {SWE_FROZEN}. Delete it only if --confirm has never been run.")
+    if P.git("status", "--porcelain", "--", "q1_rebrand", "docs/specs", "pipeline", "config.yaml"):
+        raise SystemExit("Commit explore_swe.py and the spec first: the freeze records the commit.")
+    dates = snapshot_dates()
+    seen = prepare(current_postings(dates), p)
+    SWE_KEYS.write_text("\n".join(sorted(seen.key)) + "\n")
+    config = {"rules_hash": rules_hash(), "git_commit": P.git("rev-parse", "HEAD"), "frozen_at": max(dates),
+              "frozen_on": time.strftime("%Y-%m-%d"), "seen_snapshots": dates, "seen_postings": int(len(seen))}
+    SWE_FROZEN.write_text(json.dumps(config, indent=2) + "\n")
+    print(json.dumps(config, indent=2))
+    print(f"Frozen. Commit {SWE_FROZEN.name} and {SWE_KEYS.name}.")
+
+
+def confirmation_corpus(p: dict) -> tuple[pd.DataFrame, list[str], dict]:
+    from .final import held_out_corpus
+    if not SWE_FROZEN.exists():
+        raise SystemExit("Not frozen: run --freeze first.")
+    frozen = json.loads(SWE_FROZEN.read_text())
+    if rules_hash() != frozen["rules_hash"]:
+        raise SystemExit("The spec, title rules, masking or reading rules changed since the freeze.")
+    # postings first seen after the freeze, minus near-duplicates of anything seen at the freeze
+    corpus, dates = held_out_corpus(p, {"frozen_at": frozen["frozen_at"], "dev_snapshots": frozen["seen_snapshots"]})
+    seen = set(SWE_KEYS.read_text().split())
+    return corpus[~corpus.key.isin(seen)].reset_index(drop=True), dates, frozen
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--quick", action="store_true", help="accuracy only, one seed, short bootstrap")
     ap.add_argument("--dates", nargs="*", help="snapshot dates to use (default: the development set)")
     ap.add_argument("--all", action="store_true", help="every snapshot; writes explore_swe_all.json")
+    ap.add_argument("--freeze", action="store_true", help="hash the rules and record every posting seen so far")
+    ap.add_argument("--confirm", action="store_true", help="postings first seen after the freeze")
     args = ap.parse_args(argv)
     p = P.load()
     t0 = time.time()
+    if args.freeze:
+        return freeze(p)
+    frozen = None
     if args.all:
         args.dates = snapshot_dates()
-    if args.dates:
+    if args.confirm:
+        corpus, dates, frozen = confirmation_corpus(p)
+    elif args.dates:
         corpus, dates = prepare(current_postings(args.dates), p), args.dates
     else:
         corpus, dates = development_corpus(p)
@@ -260,7 +320,7 @@ def main(argv=None) -> None:
     out = {"status": "exploratory, outside the frozen protocol", "spec": str(SPEC.relative_to(SPEC.parents[2])),
            "spec_sha256": hashlib.sha256(SPEC.read_bytes()).hexdigest(), "reading_rules": READING_RULES,
            "protocol": p["version"], "git_commit": P.git("rev-parse", "HEAD"), "snapshots": dates,
-           "counts": counts(c)}
+           "counts": counts(c), "frozen": frozen}
     print(f"{len(c):,} postings from {dates}; groups: {out['counts']['postings']}", flush=True)
     print(f"senior share: {out['counts']['senior_share']}; "
           f"strategist FDE: {out['counts']['strategist_fde']}", flush=True)
@@ -309,7 +369,7 @@ def main(argv=None) -> None:
     print(f"E1 reading: {out['E1_reading']} | E4 reading: {out['E4']['fde']['reading']} | "
           f"E5 shift without strategists: {out['E5_shift_all_companies']}", flush=True)
     out["seconds"] = round(time.time() - t0)
-    name = "explore_swe_all" if args.all else "explore_swe"
+    name = "explore_swe_confirm" if args.confirm else "explore_swe_all" if args.all else "explore_swe"
     path = P.results_dir() / (f"{name}_quick.json" if args.quick else f"{name}.json")
     path.write_text(json.dumps(out, indent=2))
     print(f"Saved to {path}")
