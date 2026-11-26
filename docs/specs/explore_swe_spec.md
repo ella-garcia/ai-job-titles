@@ -64,12 +64,16 @@ The thresholds are our proposal and were not pre-registered. Write them into the
 - FDE vs SWE ≥ 0.85, and above FDE vs SA on the same scope: **R1** for SWE. FDE is distinct from software engineering.
 - Between these: decided by E4.
 
-**E4, using mean probabilities across FDE postings:**
-- P(SWE) ≥ 0.60: **R2**.
-- P(SA) ≥ 0.60: rebrand reading (contradicts the main result; check labels first).
-- P(SA) ≥ 0.25 and P(SWE) ≥ 0.25 and P(SA) + P(SWE) ≥ 0.70: **R3**, a hybrid of SA and SWE.
+**E4, using top-class shares:** the share of FDE postings whose highest predicted probability is each class.
+- top(SWE) ≥ 0.60: **R2**.
+- top(SA) ≥ 0.60: rebrand reading (contradicts the main result; check labels first).
+- top(SA) ≥ 0.25 and top(SWE) ≥ 0.25 and top(SA) + top(SWE) ≥ 0.70: **R3**, a hybrid of SA and SWE.
 - No class ≥ 0.40: **R1**. FDE sits away from all five neighbours.
 - Anything else: report as unresolved.
+
+Mean probabilities are reported alongside but do not decide the reading.
+
+*Amended 27 Nov, before the freeze.* The first draft applied these thresholds to mean probabilities. Those sat close to the boundaries and flipped between R1 and R3 across runs, so the rule now uses top-class shares, with the same thresholds. The change was made after the development and 19–25 Nov runs had been read. Under the old rule both runs read R1; under the new rule both read R3. Only the confirmation set tests the amended rule.
 
 **E5:** if dropping strategists moves the all-companies accuracy by more than the seed SD of the headline (0.04 on development), report both versions and discuss.
 
@@ -78,8 +82,8 @@ The thresholds are our proposal and were not pre-registered. Write them into the
 Development data (13 Nov) is for building and debugging. The frozen held-out snapshots (19, 23 and 25 Nov) have already been read for the main tests. They have not been read for E1 to E5, but we have seen their companies.
 
 1. Build and debug on the 13 Nov snapshot only.
-2. Hash this spec, the new title rules and the masking list, as was done for v4. Do this before the next pull.
-3. Treat snapshots after that date as the confirmation set for E1 to E5. Report the runs on 19–25 Nov as exploratory.
+2. Hash this spec, the new title rules and the masking list, as was done for v4. Do this before the next pull: `uv run python -m q1_rebrand.explore_swe --freeze` writes `q1_rebrand/frozen/explore_swe_frozen.json` and the keys of every posting seen so far.
+3. Treat snapshots after that date as the confirmation set for E1 to E6: `--confirm` uses only postings first seen after the freeze (no exact or near-duplicate of an earlier posting) and refuses if anything hashed has changed. Report the runs on 13–25 Nov as exploratory.
 
 ## 6. Checks and caveats
 

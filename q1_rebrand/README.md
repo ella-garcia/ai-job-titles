@@ -274,6 +274,8 @@ the spec before the first run but were not pre-registered.
 ```bash
 uv run python -m q1_rebrand.explore_swe          # development set (13 Nov)
 uv run python -m q1_rebrand.explore_swe --all    # every snapshot
+uv run python -m q1_rebrand.explore_swe --freeze # hash the rules, record every posting seen so far
+uv run python -m q1_rebrand.explore_swe --confirm  # postings first seen after the freeze
 ```
 
 | Test | Development (13 Nov) | All snapshots (13–25 Nov) |
@@ -290,10 +292,14 @@ uv run python -m q1_rebrand.explore_swe --all    # every snapshot
 share of FDE postings where the class is top): SA 0.36 / 41%, software engineer 0.28 / 41%, ML 0.19 / 16%,
 consultant 0.10 / 1%, support 0.07 / 1%. SA postings, the control, land on SA 92% of the time.
 
-- **Readings.** On all snapshots E1 reads R1 for software engineering at both scopes and E4 reads R1: FDE sits
-  away from all five neighbours, split between SA and software engineering. On the development set E1 falls
-  between the thresholds and E4 decides (R1). The mean-probability rule is close to its boundaries, so the
-  top-class shares are reported alongside.
+- **Readings.** On all snapshots E1 reads R1 for software engineering at both scopes. On the development set
+  E1 falls between the thresholds, so E4 decides. E4 reads **R3, a hybrid of SA and software engineering**, on
+  both sets. As top-class shares, SA is 51% and software engineer 42% on the development set, and SA 41% and
+  software engineer 41% on all snapshots.
+- **The E4 rule changed after these runs.** The spec first applied its thresholds to mean probabilities, which
+  read R1 on both sets but sat near the boundaries and flipped between runs. On 27 Nov, before the freeze, the
+  rule was switched to top-class shares with the same thresholds. These readings are therefore exploratory,
+  and the confirmation set (`--confirm`, postings first seen after the freeze) is the test of the amended rule.
 - **Strategists are a middle role.** Deployment / Forward Deployed Strategist titles (103 postings, 17
   companies) separate from SA and from FDE engineers equally weakly, and are 0.26 closer to SA than FDE
   engineers are (95% CI −0.47 to −0.05, Holm p = 0.012). Their words: strategic, delivery, scope, engagement
