@@ -262,3 +262,45 @@ none was an FDE posting; Braze had none either, and Baseten's three were dropped
 to download (Archive refusals) and will be retried. Archived pages are scored by the full model while current
 postings use out-of-fold scores, and archived text comes from scraped pages rather than board APIs, so the
 then-vs-now gap is approximate. Earlier numbers (v1 labels, five companies) put Palantir at 0.48 / 0.52 / 0.61.
+
+## Against engineering roles ([explore_swe.py](explore_swe.py), spec [explore_swe_spec.md](../docs/specs/explore_swe_spec.md))
+
+Exploratory, outside the frozen protocol. Every rival tested before faces customers, so this asks whether FDE
+is a new job (R1), software engineering placed with the customer (R2), or a hybrid of SA and software
+engineering (R3). The new title groups and the extra masking (software / ML / AI engineer phrases and the bare
+word "strategist") live in the module, so the protocol hash is unchanged. The reading rules were written into
+the spec before the first run but were not pre-registered.
+
+```bash
+uv run python -m q1_rebrand.explore_swe          # development set (13 Nov)
+uv run python -m q1_rebrand.explore_swe --all    # every snapshot
+```
+
+| Test | Development (13 Nov) | All snapshots (13–25 Nov) |
+| --- | --- | --- |
+| E1 FDE vs software engineer, all companies | 0.848 (0.74–0.94; 20 cos) | 0.929 (0.90–0.96; 70 cos) |
+| E1 FDE vs software engineer, same companies | 0.770 (0.56–0.93; 7 cos) | 0.867 (0.76–0.96; 12 cos) |
+| E2 SA vs software engineer | 0.919 | 0.965 |
+| E3 FDE vs ML / AI engineer | 0.899 | 0.929 |
+| E5 FDE vs SA, all companies (with / without strategists) | 0.817 / 0.790 | 0.917 / 0.913 |
+| E6 strategist vs SA, all companies | 0.500 (non-result) | 0.650 (0.45–0.87; 43 cos) |
+| E6 strategist vs FDE engineer, all companies | 0.500 (non-result) | 0.650 (0.48–0.84; 44 cos) |
+
+**E4 placement** (five-way model trained without FDE, scored out of company; all snapshots, mean probability /
+share of FDE postings where the class is top): SA 0.36 / 41%, software engineer 0.28 / 41%, ML 0.19 / 16%,
+consultant 0.10 / 1%, support 0.07 / 1%. SA postings, the control, land on SA 92% of the time.
+
+- **Readings.** On all snapshots E1 reads R1 for software engineering at both scopes and E4 reads R1: FDE sits
+  away from all five neighbours, split between SA and software engineering. On the development set E1 falls
+  between the thresholds and E4 decides (R1). The mean-probability rule is close to its boundaries, so the
+  top-class shares are reported alongside.
+- **Strategists are a middle role.** Deployment / Forward Deployed Strategist titles (103 postings, 17
+  companies) separate from SA and from FDE engineers equally weakly, and are 0.26 closer to SA than FDE
+  engineers are (95% CI −0.47 to −0.05, Holm p = 0.012). Their words: strategic, delivery, scope, engagement
+  (vs SA's pre-sales, architecture, cloud, proof); executive, strategy, discovery, expansion (vs engineers'
+  code, applications, developer, monitoring). Dropping them barely moves FDE vs SA (−0.004 on all snapshots).
+- **Limits.** The 19–25 Nov snapshots were already read for the main tests, so the all-snapshots column is
+  exploratory; the confirmation set is the snapshots after the spec is hashed. The same-company E6 tests (2 and
+  4 companies) predict one class and are non-results. Software engineer postings skew senior: 53% vs 33% of
+  FDE on the development set (20 points, at the spec's threshold) and 50% vs 29% on all snapshots (21 points,
+  over it). The senior-only rerun of E1 the spec asks for has not been done yet.
