@@ -9,7 +9,7 @@ IE University, MCSBT [verify: course name and session] · November 2026
 
 ## Abstract
 
-AI companies advertise many new job titles, and a new title does not show that the work is new. This paper tests whether the Forward Deployed Engineer (FDE) is a new role or a Solutions Architect (SA) under another name. We remove job titles and company names from 18,562 job postings and ask whether a classifier can still tell FDE postings from SA postings. We read the result against two anchors: two names for one job, and two clearly different jobs. The method, labels and comparisons were frozen before the test data existed. On held-out postings from 57 companies the model had never seen, it separates FDE from SA with 0.907 accuracy (95% CI 0.87–0.94; chance 0.54). Within the same companies, accuracy is 0.796 on the development set and 0.750 on held-out data, the latter from only three companies. FDE postings describe building software in production, while SA postings describe selling. FDE is its own post-sales engineering job, and SA is its nearest neighbour. In an exploratory check with company descriptions removed, 4.3% of FDE postings read like SA postings. One pre-registered comparison cannot yet be run on held-out data, and we report it as open.
+AI companies advertise many new job titles, and a new title does not show that the work is new. This paper tests whether the Forward Deployed Engineer (FDE) is a new role or a Solutions Architect (SA) under another name. We remove job titles and company names from 18,562 job postings and ask whether a classifier can still tell FDE postings from SA postings. We read the result against two anchors: two names for one job, and two clearly different jobs. The method, labels and comparisons were frozen before the test data existed. On held-out postings from 57 companies the model had never seen, it separates FDE from SA with 0.907 accuracy (95% CI 0.87–0.94; chance 0.54). Within the same companies, accuracy is 0.796 on the development set and 0.750 on held-out data, the latter from only three companies. FDE postings describe building software in production, while SA postings describe selling. FDE is its own post-sales engineering job. Exploratory tests show it is no closer to SA than to software engineering: it separates from software engineers with 0.929 accuracy and from SA with 0.917, and a model trained without FDE postings places them with SA and with software engineers in equal shares (41% each). In an exploratory check with company descriptions removed, 4.3% of FDE postings read like SA postings. One pre-registered comparison cannot yet be run on held-out data, and we report it as open.
 
 ---
 
@@ -23,13 +23,14 @@ The question has been framed around the wrong object. Titles are labels; posting
 
 **Research question: is the Forward Deployed Engineer a new role, or a Solutions Architect with a new title?**
 
-We ask three sub-questions:
+We ask four sub-questions:
 
 1. With titles and company names hidden, how well can a classifier separate FDE postings from SA postings, compared with two names for the same job and with two clearly different jobs?
 2. Does the separation hold on postings and companies that played no part in building the method?
 3. Is FDE instead a rename of another neighbouring role: Solutions Engineer, technical consultant or support engineer?
+4. Is FDE software engineering placed with the customer, rather than a relative of SA?
 
-Our thesis is that FDE is a distinct post-sales engineering job whose nearest neighbour is SA. Section 2 sets out the framework, Section 3 the data and Section 4 the method. Section 5 reports results, Section 6 draws them together, Section 7 gives implications, and Section 8 lists the limits.
+Our thesis is that FDE is a distinct post-sales engineering job that combines SA's customer work with software engineering's delivery, and is a rename of neither. Section 2 sets out the framework, Section 3 the data and Section 4 the method. Section 5 reports results, Section 6 draws them together, Section 7 gives implications, and Section 8 lists the limits.
 
 The paper makes three contributions. It replaces title counts with a test on posting text. It gives accuracy a meaning by reading it against two anchors. It reports a held-out result from a protocol frozen before the test data existed, including the comparisons that failed for lack of data.
 
@@ -274,11 +275,60 @@ Three employers stand out afterwards: Cloudflare (3 of 8), Capgemini (4 of 15) a
 
 **Assessment:** mislabelled FDE postings are **rare** and **concentrated**. Company descriptions, left in, would have overstated them almost twofold.
 
+### 5.7 Against engineering roles (exploratory)
+
+FDE is as far from software engineering as it is from SA. Every rival tested so far faces customers, and the terms that pull a posting towards FDE (production, deploy, build, agent) also fill ordinary software engineering postings. So "FDE separates from SA" fits three readings: FDE is a new job (R1), software engineering placed with the customer (R2), or a hybrid of SA's customer work and software engineering's delivery (R3). A written specification fixed the groups, tests and reading rules before the first run; it was not pre-registered.
+
+Two groups were added, labelled from titles after the existing rules so that no posting changes group. Software engineer (SWE) covers software engineer and developer, backend, frontend, full-stack, platform and infrastructure engineer titles, excluding customer-facing, management, junior and AI or data titles. ML engineer covers machine learning, ML and AI engineer and applied scientist titles. Applied AI Engineer, a customer-facing title at some AI labs, is kept out of both: 95 postings, 56 of them at OpenAI. The new title phrases and the bare word "strategist" are masked as well. Because of this extra masking, and because the right-hand column pools development and held-out weeks, the FDE against SA figures in Table 8 differ from those in Tables 2 and 3.
+
+**Table 8.** FDE against engineering roles (exploratory; accuracy with 95% CI and number of companies)
+
+| Test | Development (13 Nov) | All snapshots (13–25 Nov) |
+| --- | --- | --- |
+| E1 FDE vs SWE, all companies | 0.848 (0.74–0.94; 20) | 0.929 (0.90–0.96; 70) |
+| E1 FDE vs SWE, same companies | 0.770 (0.56–0.93; 7) | 0.867 (0.76–0.96; 12) |
+| E1 FDE vs SWE, senior titles only, all companies | n/a | 0.942 (0.89–0.98; 50) |
+| E2 SA vs SWE, all companies | 0.919 (0.83–0.99; 22) | 0.965 (0.93–0.99; 67) |
+| E3 FDE vs ML engineer, all companies | 0.899 (0.86–0.94; 18) | 0.929 (0.89–0.96; 64) |
+| E5 FDE vs SA, all companies | 0.817 (0.72–0.92; 21) | 0.917 (0.88–0.95; 70) |
+| E5 FDE vs SA, same companies | 0.776 (0.58–0.92; 5) | 0.863 (0.73–0.94; 8) |
+| E5 FDE vs SA without strategist titles, all companies | 0.790 (0.64–0.92; 21) | 0.913 (0.87–0.95; 69) |
+| E6 Strategist vs SA, all companies | 0.500, non-result (16) | 0.650 (0.45–0.87; 43) |
+| E6 Strategist vs FDE engineer, all companies | 0.500, non-result (13) | 0.650 (0.48–0.84; 44) |
+
+*Note.* Chance (95th percentile of 200 label shuffles) is 0.53 to 0.56 throughout. The 19–25 November snapshots had already been read for the main tests, so the right-hand column is exploratory too. The senior-only row ran because 50% of SWE titles are senior, staff or principal against 29% of FDE titles, a gap above the specification's 20-point threshold.
+
+FDE separates from software engineers about as well as from SA: 0.929 against 0.917 on all snapshots, a difference of +0.012 (95% CI −0.04 to 0.06; Holm p = 0.62). Within the same companies the two are also level (0.867 against 0.863). Seniority does not explain the SWE result, since senior titles alone separate slightly better (0.942). SA and SWE, the two candidate parents, are further from each other (0.965) than either is from FDE, although that gap is not significant (+0.036; Holm p = 0.19).
+
+The terms show what each parent lacks. Against SWE, FDE postings say customer, strategic, travel, engagements, enterprise and outcomes, while SWE postings say infrastructure, reliability, systems, features and distributed systems. Against ML engineers, FDE postings say customer, delivery and deployments, while ML postings say model, training, evaluation and PyTorch. Set beside Table 4, FDE takes its engineering vocabulary from one side and its customer vocabulary from the other.
+
+A placement test asks where FDE postings land when the model has never seen an FDE posting. A five-class model (SA, SWE, ML engineer, support engineer, technical consultant) was trained without FDE postings and scored each FDE posting out of company. SA postings scored the same way serve as the control.
+
+**Table 9.** Placement of FDE postings among five neighbours (all snapshots; exploratory)
+
+| Class | Share of FDE postings where the class is top (95% CI) | Mean probability across FDE postings | SA control: share where the class is top |
+| --- | --- | --- | --- |
+| SA | 41% (27–57%) | 0.36 | 92% |
+| Software engineer | 41% (22–61%) | 0.28 | 4% |
+| ML engineer | 16% (8–25%) | 0.19 | 3% |
+| Technical consultant | 1% | 0.10 | 0% |
+| Support engineer | 1% | 0.07 | 1% |
+
+*Note.* 690 FDE postings from 64 companies and 704 SA postings from 54 companies. On the development set, where consultant had too few companies and was dropped, the top shares are SA 51% and SWE 42%.
+
+The control works: SA postings land on SA 92% of the time. FDE postings split evenly between SA and software engineering, and almost none land on support or consulting.
+
+Under the specification's rule this reads R3, a hybrid of SA and software engineering, on both data sets. That reading needs a caveat. The rule first applied its thresholds to mean probabilities, which read R1 (no class above 0.40) but sat close to their boundaries and flipped between runs. On 27 November, after both runs had been read, the rule was switched to top-class shares with the same thresholds, and the full specification was then frozen with a hash, as the main protocol was (Section 4.5). The R3 reading is therefore exploratory. Postings first seen after 25 November are the confirmation set.
+
+Strategist titles (Deployment and Forward Deployed Strategist; 103 postings at 17 companies) sit between SA and FDE engineers. They separate from each only weakly (0.650 for both) and are 0.26 closer to SA than FDE engineers are (95% CI −0.47 to −0.05; Holm p = 0.012). Their postings say strategic, scope, executive and discovery. Dropping them barely moves FDE against SA (−0.004 on all snapshots), so they do not drive the main result. Both same-company strategist tests had two to four companies and predicted one class: non-results.
+
+**Assessment:** FDE is **not** software engineering under another name, and **neither parent is nearer** than the other. The placement test reads FDE as a **hybrid** of SA and software engineering, on a rule amended after the data were seen.
+
 ## 6. Synthesis
 
 The evidence is strongest where the claim is broadest and weakest where it is most controlled.
 
-**Table 8.** Status of each claim
+**Table 10.** Status of each claim
 
 | Claim | Evidence | Status |
 | --- | --- | --- |
@@ -291,8 +341,11 @@ The evidence is strongest where the claim is broadest and weakest where it is mo
 | FDE is not a renamed technical consultant | Two companies in each data set | **Not tested** |
 | The FDE role moved away from SA over time | P(FDE) 0.39 to 0.67; SA flat | **Suggestive** |
 | Few FDE postings are SA work under an FDE title | 4.3% of 624 postings score as SA-like, in three employers | **Suggestive**, exploratory |
+| FDE is not software engineering under another name | 0.929 on 70 companies; 0.867 on 12 same companies; 0.942 on senior titles | **Supported**, exploratory |
+| FDE is a hybrid of SA and software engineering | Top class for 41% of FDE postings each; rule amended after the data were seen | **Suggestive**, exploratory; confirmation pending |
+| Strategist titles do not drive the FDE result | Dropping them moves FDE vs SA by −0.004 | **Supported**, exploratory |
 
-The paper's main finding is that FDE is a distinct post-sales engineering job, with SA as its nearest neighbour.
+The paper's main finding is that FDE is a distinct post-sales engineering job. Exploratory tests place it between SA and software engineering, nearer neither.
 
 ## 7. Implications and next steps
 
@@ -302,28 +355,31 @@ The findings change how a new title should be read, and they set the order of th
 
 1. Job seekers should read the posting before the title. An FDE posting that talks about demos, deals and accounts describes SA work, whatever it is called (Section 5.3). Such postings are rare, about 4% of FDE postings, and concentrated in a few employers (Section 5.6).
 2. Employers should expect the FDE title to signal engineering. Across 57 held-out companies the title is attached to production work (Section 5.2), so using it for a pre-sales role sets an expectation that the posting text contradicts.
-3. Researchers should not count titles as roles. The masked-text test applies to GTM Engineer, Prompt Engineer and other new titles, each against its own candidate predecessor and its own two anchors (Section 2.2).
+3. Engineers weighing an FDE role should expect customer work as well as engineering. FDE postings separate from software engineering postings on customer, travel, engagement and outcomes (Section 5.7).
+4. Researchers should not count titles as roles, and should test a new title against predecessors on more than one side. FDE looked like "not SA" until software engineering was added as a second candidate. The masked-text test applies to GTM Engineer, Prompt Engineer and other new titles, each against its own candidate predecessor and its own two anchors (Section 2.2).
 
 ### 7.2 Next steps, in order
 
 Each step has a condition that must be met before it runs. The thresholds are our proposal and were not pre-registered.
 
-**Table 9.** Remaining tests and their conditions
+**Table 11.** Remaining tests and their conditions
 
 | Step | Action | Condition to run | Closes |
 | --- | --- | --- | --- |
 | 1 | Rerun the held-out protocol with the near-synonym anchor | At least 4 companies with 8 new SA "architect" and 8 new SA "engineer" postings, as on the development set | Comparisons 1 and 3 (Section 5.2) |
 | 2 | Rerun the consultant test | At least 4 companies with 8 FDE and 8 technical-consultant postings | The untested consultant reading (Sections 5.1 and 5.4) |
 | 3 | Label 150 postings by hand, two annotators, agreement reported as Cohen's kappa | Before any new protocol version is frozen | The unaudited title rules (Section 8) |
-| 4 | Apply the test to title growth, duplicate postings and AI-washing | After steps 1 to 3 | The project's remaining research questions |
+| 4 | Confirmation run of the engineering-role tests (`explore_swe --confirm`) | Postings first seen after 25 Nov; the frozen hash must match | The R3 reading and the amended placement rule (Section 5.7) |
+| 5 | Read 20 FDE postings placed on SA, 20 placed on SWE and 10 Applied AI Engineer postings by hand | Before the confirmation run is written up | Whether placement reflects the work described |
+| 6 | Apply the test to title growth, duplicate postings and AI-washing | After steps 1 to 5 | The project's remaining research questions |
 
 ## 8. Limitations
 
-The results have specific limits. Within-company evidence on held-out data rests on three companies, and its bootstrap interval understates the uncertainty. The near-synonym anchor is missing on held-out data, so the central pre-registered comparison is confirmed only on development data. The consultant test has two companies in each data set and shows nothing either way. Most held-out postings come from boards added after the freeze, so the held-out set tests new companies more than new time periods, and its snapshots span seven days. Labels come from title rules that no human has yet audited against a hand-labelled set. The sources over-represent AI-native firms and a few large employers. Google Cloud, the main user of the Customer Engineer title, is absent, and rate limits left several Workday career sites only partly collected. Posting text is written by employers, so it measures how a job is advertised, not the work as performed. The classifier uses word counts and cannot see pay, seniority or reporting lines. Only English postings are included. The over-time analysis depends on which pages the Wayback Machine kept. The title check uses a cut-off of 0.4 that was not pre-registered, and its per-company counts are small. A title-normalisation change after the freeze altered 3 of 19,861 labels in the held-out rerun.
+The results have specific limits. Within-company evidence on held-out data rests on three companies, and its bootstrap interval understates the uncertainty. The near-synonym anchor is missing on held-out data, so the central pre-registered comparison is confirmed only on development data. The consultant test has two companies in each data set and shows nothing either way. Most held-out postings come from boards added after the freeze, so the held-out set tests new companies more than new time periods, and its snapshots span seven days. Labels come from title rules that no human has yet audited against a hand-labelled set. The sources over-represent AI-native firms and a few large employers. Google Cloud, the main user of the Customer Engineer title, is absent, and rate limits left several Workday career sites only partly collected. Posting text is written by employers, so it measures how a job is advertised, not the work as performed. The classifier uses word counts and cannot see pay, seniority or reporting lines. Only English postings are included. The over-time analysis depends on which pages the Wayback Machine kept. The title check uses a cut-off of 0.4 that was not pre-registered, and its per-company counts are small. A title-normalisation change after the freeze altered 3 of 19,861 labels in the held-out rerun. The engineering-role tests are exploratory throughout: their placement rule was switched after the data were read, the 19–25 November snapshots had already been used for the main tests, and software engineer postings come from more companies and skew more senior than FDE postings. Strategist titles come mostly from four employers, and both same-company strategist tests failed for lack of companies.
 
 ## 9. Conclusion
 
-Forward Deployed Engineer is not a Solutions Architect under a new name. With titles and employers hidden, the two are separable on companies the model never saw, and the words that separate them describe different work: shipping software into production against supporting a sale. The two roles remain neighbours, less separable from each other than either is from product management. What we cannot yet show on held-out data is the size of the gap inside a single company, because too few companies have posted both roles since the freeze. That test is frozen and waiting for data.
+Forward Deployed Engineer is not a Solutions Architect under a new name. With titles and employers hidden, the two are separable on companies the model never saw, and the words that separate them describe different work: shipping software into production against supporting a sale. The two roles remain neighbours, less separable from each other than either is from product management. Nor is FDE software engineering with a new title: it is as far from software engineers as from SA, and in exploratory tests its postings divide between the two. The FDE is best read as a hybrid, an engineer who ships production software and also carries the customer relationship. What we cannot yet show on held-out data is the size of the gap inside a single company, because too few companies have posted both roles since the freeze. That test is frozen and waiting for data.
 
 ---
 
@@ -382,5 +438,8 @@ The code is in the project repository; posting text is kept on a private data br
 | Rival roles | `uv run python -m q1_rebrand.explore_titles` | `data/runs/q1/explore_titles.json` |
 | Over time | `make q1-over-time` | `data/runs/q1/over_time.json` |
 | Title check | `uv run python -m q1_rebrand.explore_title_check` | `data/runs/q1/title_check.json` |
+| Engineering roles, development set | `uv run python -m q1_rebrand.explore_swe` | `data/runs/q1/explore_swe.json` |
+| Engineering roles, all snapshots | `uv run python -m q1_rebrand.explore_swe --all` | `data/runs/q1/explore_swe_all.json` |
+| Engineering roles, confirmation | `uv run python -m q1_rebrand.explore_swe --confirm` | `data/runs/q1/explore_swe_confirm.json` |
 
 Settings: per-company cap 40; minimum 8 per class for within-company tests; TF-IDF on 1–2 grams with minimum document frequency 3 and sublinear term frequency; C grid {0.1, 1, 10, 100}; 5 outer and 3 inner folds; 2,000 bootstrap draws; 200 permutations; 10 sampling seeds; seed 42.
